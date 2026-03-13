@@ -28,7 +28,7 @@ def overlap(person, gear, threshold=0.4):   # 0.4 means if the gear overlap pers
 person_model = YOLO("models/yolov8n.pt")       # COCO person detector
 safety_model = YOLO("models/helmet_model_V1.pt")  # helmet + vest detector
 
-cap = cv2.VideoCapture("X:\\Construction-Site\\testvid5.mp4")
+cap = cv2.VideoCapture("X:\\Construction-Site\\testvid4.mp4")
 
 if not cap.isOpened():
     print("Error: Could not open video file.")

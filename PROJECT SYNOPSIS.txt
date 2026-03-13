@@ -1,0 +1,297 @@
+PROJECT SYNOPSIS
+Project Title:
+
+AI-Based Smart Construction Site Safety Monitoring System
+
+1. Introduction
+
+Construction sites are among the most hazardous workplaces due to the involvement of heavy machinery, elevated structures, and manual labor. According to industrial safety statistics, a large number of accidents occur because of non-compliance with safety measures such as wearing helmets, maintaining safe distance from machinery, and preventing fall incidents.
+
+Traditional safety monitoring methods rely heavily on manual supervision, which is time-consuming, inconsistent, and prone to human error. With advancements in Artificial Intelligence and Computer Vision, it is now possible to automate safety monitoring using video analysis.
+
+The proposed system, AI-Based Smart Construction Site Safety Monitoring System, is designed to automatically detect safety violations from uploaded construction site videos. The system uses machine learning models to identify helmet violations, unsafe proximity to heavy machinery, and fall incidents, and generates alerts along with analytical reports through a web-based dashboard.
+
+2. Objective
+
+The main objectives of this project are:
+
+To develop an AI-based system that detects helmet compliance of workers.
+
+To identify fall incidents using pose estimation techniques.
+
+To detect unsafe proximity between workers and heavy machinery.
+
+To calculate and display safety risk levels based on detected violations.
+
+To provide a web-based dashboard for monitoring alerts and analytics.
+
+To store and manage violation data using a database system.
+
+3. Project Category
+
+Artificial Intelligence / Machine Learning Based Application
+
+Computer Vision Based Safety Monitoring System
+
+Web-Based Application
+
+4. Tools and Languages
+Programming Language:
+
+Python
+
+Machine Learning & Computer Vision:
+
+YOLOv8 (Object Detection)
+
+MediaPipe (Pose Estimation)
+
+OpenCV
+
+NumPy
+
+Backend:
+
+FastAPI (Python Framework)
+
+Frontend:
+
+HTML
+
+CSS
+
+JavaScript
+
+Bootstrap (for UI design)
+
+Database:
+
+MongoDB
+
+Development Tools:
+
+Visual Studio Code
+
+GitHub
+
+Postman (API testing)
+
+5. Hardware and Software Requirements
+Hardware Requirements:
+
+Minimum 8 GB RAM
+
+Intel i5 Processor or above
+
+256 GB storage
+
+Webcam (optional for testing)
+
+GPU (optional, for faster model processing)
+
+Software Requirements:
+
+Windows 10/11 or Linux
+
+Python 3.10+
+
+MongoDB Server
+
+Web Browser (Chrome/Edge/Firefox)
+
+6. Modules of the Software
+
+Video Upload & Processing Module
+
+Helmet Detection Module
+
+Worker Pose & Fall Detection Module
+
+Danger Zone Detection Module
+
+Risk Scoring Module
+
+Alert & Notification Module
+
+Analytics Dashboard Module
+
+Database Management Module
+
+
+. Module Description
+7.1 Video Upload & Processing Module
+
+This module allows users to upload construction site videos. The video is processed frame-by-frame using OpenCV for further analysis.
+
+7.2 Helmet Detection Module
+
+This module uses YOLOv8 object detection model to detect workers and safety helmets. If a worker is detected without a helmet, the system marks it as a violation and generates an alert.
+
+7.3 Worker Pose & Fall Detection Module
+
+This module uses MediaPipe pose estimation to extract body keypoints of workers. Based on body angle and posture analysis, the system detects potential fall incidents.
+
+7.4 Danger Zone Detection Module
+
+This module detects heavy machinery and calculates the distance between workers and machinery using bounding box coordinates. If the distance is below a predefined threshold, it generates an unsafe proximity warning.
+
+7.5 Risk Scoring Module
+
+Each violation is assigned a weight. The total risk score is calculated and categorized into:
+
+Low Risk
+
+Medium Risk
+
+High Risk
+
+7.6 Alert & Notification Module
+
+This module displays real-time alerts on the dashboard and logs violations with timestamps.
+
+7.7 Analytics Dashboard Module
+
+The dashboard displays:
+
+Total violations
+
+Helmet compliance percentage
+
+Fall incidents
+
+Weekly safety statistics
+
+Risk trends
+
+7.8 Database Management Module
+
+MongoDB stores:
+
+Violation records
+
+Processed video details
+
+Risk summaries
+
+Alert history
+
+8. Module Design (System Design)
+Use Case Diagram (Description)
+
+Actors:
+
+User (Supervisor/Admin)
+
+Use Cases:
+
+Upload Video
+
+Start Monitoring
+
+View Alerts
+
+View Analytics
+
+Generate Report
+
+Data Flow Diagram (DFD – Level 0)
+
+User → Upload Video → Backend Server → AI Processing → Database Storage → Dashboard Display
+
+Class Diagram (Description)
+
+Main Classes:
+
+VideoProcessor
+
+HelmetDetector
+
+PoseDetector
+
+ProximityDetector
+
+RiskEngine
+
+AlertManager
+
+DatabaseManager
+
+Each class handles specific functionality and communicates with the backend server.
+
+9. Database Design (MongoDB Collections)
+Collection 1: Violations
+
+_id
+
+video_name
+
+violation_type
+
+timestamp
+
+risk_score
+
+frame_image_path
+
+Collection 2: ProcessedVideos
+
+_id
+
+video_name
+
+date_processed
+
+total_violations
+
+risk_level
+
+Collection 3: Analytics
+
+_id
+
+date
+
+helmet_violations
+
+fall_incidents
+
+proximity_warnings
+
+10. Scope of the Project
+
+Can be implemented in construction sites for automated safety monitoring.
+
+Can reduce workplace accidents.
+
+Can be extended to factories and industrial environments.
+
+Can integrate with real-time CCTV systems in the future.
+
+Can be deployed on cloud platforms for large-scale monitoring.
+
+11. Limitations and Future Scope
+Limitations:
+
+Accuracy depends on video quality.
+
+Processing time increases for longer videos.
+
+Requires good lighting conditions.
+
+Currently supports uploaded videos only (not live streaming).
+
+Future Scope:
+
+Real-time CCTV integration.
+
+SMS/Email alert system.
+
+Multi-camera support.
+
+Cloud-based deployment.
+
+Integration with IoT safety devices.
+
+12. Conclusion
+
+The AI-Based Smart Construction Site Safety Monitoring System aims to improve workplace safety through intelligent video analysis. By using machine learning and computer vision techniques, the system automates detection of safety violations and provides analytical insights through a web dashboard. This project demonstrates practical application of AI in industrial safety management and offers a scalable solution for modern construction environments.
