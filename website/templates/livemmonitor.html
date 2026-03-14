@@ -5,6 +5,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Monitor</title>
+    <link rel="stylesheet" href="../assets/css/livemonitor.css">
+    <style>
+        .container {
+            border: 2px solid black;
+            height: 850px;
+            width: 1880px;
+            margin: 5px;;
+        }
+
+        .uplode {
+            border: 2px solid black;
+            width: 890px;
+            height: 500px;
+            margin: 25px;
+        }
+
+        .detection {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .analysis {
+            border: 2px solid black;
+            height: 245px;
+            width: 1825px;
+            margin: 25px;
+
+            
+        }
+    </style>
 </head>
 
 <body>
@@ -14,6 +44,15 @@
         <a href="">Analytics</a>
         <a href="">Alert</a>
     </nav>
+
+    <div class="container">
+        <div class="detection">
+            <div class="uplode"></div>
+            <div class="uplode"></div>
+        </div>
+
+        <div class="analysis"></div>
+    </div>
 
 
 </body>
