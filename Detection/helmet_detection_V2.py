@@ -5,7 +5,7 @@ import cv2
 
 
 def overlap(person, gear, threshold=0.4):   # 0.4 means if the gear overlap person 40%  then its considerd as wearing the gear
-    # this function is used to check if the helmet is n person or not by checking if the boxex overlap on each other.
+    # this function is used to check if the helmet is In person or not by checking if the boxex overlap on each other.
     x1 = max(person[0], gear[0])
     y1 = max(person[1], gear[1])
     x2 = min(person[2], gear[2])
@@ -153,7 +153,8 @@ while cap.isOpened():
     out.write(annotated_frame)
     cv2.imshow("Safety Detection", annotated_frame)
 
-    if cv2.waitKey(1) & 0xFF == ord("q"):
+    key = cv2.waitKey(25) & 0xFF
+    if key == ord("q") or key == 27:  # 27 = ESC
         break
 
 cap.release()

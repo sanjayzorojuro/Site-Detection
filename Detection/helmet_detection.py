@@ -3,7 +3,8 @@ import cv2
 
 model = YOLO("models/helmet_model_V1.pt")
 
-cap = cv2.VideoCapture("X:\\Construction-Site\\testvid.mp4")
+cap = cv2.VideoCapture(0)
+# cap = cv2.VideoCapture("X:\\Construction-Site\\testvid.mp4")
 
 width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))

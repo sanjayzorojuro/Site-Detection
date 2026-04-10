@@ -1,15 +1,164 @@
+/* ===== Reset & Base ===== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #0d1117;
+    color: #e6edf3;
+    min-height: 100vh;
+}
+
+/* ===== Navbar ===== */
 .navbar {
-    width: 1880px;
-    height: 60px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
-    backdrop-filter: blur(20px);
-    border-bottom: 2px solid rgba(234, 88, 12, 0.2);
     display: flex;
     align-items: center;
+    gap: 8px;
+    background-color: #161b22;
+    border-bottom: 1px solid #21262d;
+    padding: 0 24px;
+    height: 56px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #8b949e;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+    letter-spacing: 0.01em;
+}
+
+.navbar a:hover {
+    color: #e6edf3;
+    background-color: #21262d;
+}
+
+.navbar a:nth-child(2) {
+    color: #58a6ff;
+    background-color: #1f3a5f;
+}
+
+/* ===== Main Container ===== */
+.container {
+    border: 1.5px solid #21262d;
+    height: 850px;
+    width: 1880px;
+    margin: 5px;
+    background-color: #161b22;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== Detection Row ===== */
+.detection {
+    display: flex;
     justify-content: space-between;
-    padding: 0 40px;
-    box-shadow: 0 4px 20px rgba(234, 88, 12, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    padding: 0;
+}
+
+/* ===== Upload / Camera Panels ===== */
+.uplode {
+    border: 1.5px solid #21262d;
+    width: 890px;
+    height: 500px;
+    margin: 25px;
+    border-radius: 10px;
+    background-color: #0d1117;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Camera feed placeholder icon */
+.uplode::before {
+    content: '';
+    width: 56px;
+    height: 40px;
+    border: 2.5px solid #30363d;
+    border-radius: 6px;
+    display: block;
+    position: relative;
+}
+
+/* Camera lens dot */
+.uplode::after {
+    content: 'No Feed Available';
+    font-size: 13px;
+    color: #484f58;
+    letter-spacing: 0.03em;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+/* Panel label badges */
+.uplode:first-child::before {
+    box-shadow: inset 0 0 0 2px #1f3a5f;
+    border-color: #388bfd;
+}
+
+.uplode:first-child::after {
+    content: 'Camera Feed 1';
+    color: #388bfd;
+}
+
+.uplode:last-child::before {
+    box-shadow: inset 0 0 0 2px #2d3a1e;
+    border-color: #3fb950;
+}
+
+.uplode:last-child::after {
+    content: 'Camera Feed 2';
+    color: #3fb950;
+}
+
+/* Corner accent lines on panels */
+.uplode:first-child {
+    border-color: #1f3a5f;
+    box-shadow: inset 0 0 40px rgba(56, 139, 253, 0.04);
+}
+
+.uplode:last-child {
+    border-color: #2d3a1e;
+    box-shadow: inset 0 0 40px rgba(63, 185, 80, 0.04);
+}
+
+/* ===== Analysis Panel ===== */
+.analysis {
+    border: 1.5px solid #21262d;
+    height: 245px;
+    width: 1825px;
+    margin: 0 25px 25px 25px;
+    border-radius: 10px;
+    background-color: #0d1117;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+/* Inner metric sections using CSS counters + pseudo-content simulation */
+.analysis::before {
+    content: 'Analysis & Detection Log';
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #8b949e;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-right: 1px solid #21262d;
+    min-width: 220px;
+    background-color: #161b22;
 }
