@@ -1,3 +1,6 @@
+# module 1 
+# need beter fps and better fall detection 
+
 import cv2
 import mediapipe as mp
 import time
