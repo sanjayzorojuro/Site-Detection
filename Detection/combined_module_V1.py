@@ -1,4 +1,4 @@
-
+# combined model version 1 with person helmet ,jacket and pose estimation
 import cv2
 import mediapipe as mp
 import time
