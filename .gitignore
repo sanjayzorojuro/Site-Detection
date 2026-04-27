@@ -5,3 +5,4 @@ runs/
 *.log
 .env
 dataset
+*.mp4

@@ -1,11 +1,3 @@
-# ─────────────────────────────────────────────────────────────────────────────
-#  COMBINED SAFETY PIPELINE
-#  Module 1 : Fall / edge / motionless / falling-object detection
-#  Module 2 : Helmet & reflective-jacket (PPE) detection
-#
-#  Two more modules (heavy machinery) will be added later.
-#  Keep this file as the single integration point.
-# ─────────────────────────────────────────────────────────────────────────────
 
 import cv2
 import mediapipe as mp
