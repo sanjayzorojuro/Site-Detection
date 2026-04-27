@@ -22,7 +22,7 @@ pose    = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5
 mp_draw = mp.solutions.drawing_utils
 
 # ─── Video Setup ──────────────────────────────────────────────────────────────
-cap = cv2.VideoCapture("X:\\Construction-Site\\maintestvid.mp4")
+cap = cv2.VideoCapture("X:\\Construction-Site\\testvid5.mp4")
 
 if not cap.isOpened():
     print("Error: Could not open video.")
@@ -32,6 +32,7 @@ width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 fps    = cap.get(cv2.CAP_PROP_FPS)
 fps    = fps if fps > 0 else 25
+frame_delay_ms = int(1000 / fps)   # target ms per frame, e.g. 33ms for 30 fps
 
 out = cv2.VideoWriter(
     "output_combined_safety.mp4",
@@ -195,9 +196,14 @@ def overlap(person, gear, threshold=GEAR_OVERLAP_THRESH):
     return (intersection / gear_area) > threshold
 
 # ─── State Variables ──────────────────────────────────────────────────────────
-trackers   = {}
-prev_gray  = None
+trackers    = {}
+prev_gray   = None
 frame_count = 0
+
+# FPS smoothing — rolling average over last 30 frames
+fps_history    = []
+fps_display    = 0.0
+frame_start_t  = None
 
 # Cached results reused on skipped frames
 last_person_boxes       = []
@@ -221,6 +227,7 @@ while cap.isOpened():
         break
 
     frame_count    += 1
+    frame_start_t   = time.time()          # start timing this frame
     annotated_frame = frame.copy()
     gray            = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -379,9 +386,17 @@ while cap.isOpened():
                 (10, danger_zone_y - 5),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
 
+    # ── Live FPS calculation (rolling average over 30 frames) ─────────────────
+    elapsed_ms = (time.time() - frame_start_t) * 1000
+    if elapsed_ms > 0:
+        fps_history.append(1000 / elapsed_ms)
+        if len(fps_history) > 30:
+            fps_history.pop(0)
+        fps_display = sum(fps_history) / len(fps_history)
+
     # ── HUD ───────────────────────────────────────────────────────────────────
     cv2.putText(annotated_frame,
-                f"Processing every {PROCESS_EVERY_N_FRAMES} frames | AI size: {RESIZE_FOR_AI}px | Modules: fall+edge+PPE",
+                f"FPS: {fps_display:.1f}  |  AI every {PROCESS_EVERY_N_FRAMES} frames  |  {RESIZE_FOR_AI}px  |  fall+edge+PPE",
                 (10, height - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.42, (200, 200, 200), 1)
 
@@ -390,7 +405,12 @@ while cap.isOpened():
     out.write(annotated_frame)
     cv2.imshow("Construction Safety Detection", annotated_frame)
 
-    if cv2.waitKey(1) & 0xFF == ord("q"):
+    # ── Smooth playback: wait only the time remaining in this frame budget ────
+    # If AI took 20ms and the frame budget is 33ms, wait 13ms.
+    # If AI took longer than the budget, waitKey(1) keeps things moving.
+    processing_ms = (time.time() - frame_start_t) * 1000
+    wait_ms = max(1, int(frame_delay_ms - processing_ms))
+    if cv2.waitKey(wait_ms) & 0xFF == ord("q"):
         break
 
 cap.release()
