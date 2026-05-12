@@ -1,20 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics</title>
-    <link rel="stylesheet" href="../assets/css/analytics.css">
+    <title>Analytics — SafeSite AI</title>
+    <meta name="description" content="Safety analytics dashboard with risk analysis and violation statistics.">
+    <link rel="stylesheet" href="/static/css/analytics.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <nav class="navbar"> 
-        <a href="">Home</a>
-        <a href="">Live Monitor</a>
-        <a href="">Analytics</a>
-        <a href="">Alert</a>
+    <nav class="nav">
+        <div class="nav-brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span>SafeSite AI</span>
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/monitor">Live Monitor</a>
+            <a href="/alerts">Alerts</a>
+            <a href="/analytics" class="active">Analytics</a>
+        </div>
     </nav>
-</body>
 
+    <div class="page-layout">
+        <div class="page-header">
+            <h1>📊 Safety Analytics</h1>
+            <p>Aggregated risk analysis and violation statistics from all monitoring sessions.</p>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="analytics-summary" id="analytics-summary">
+            <div class="a-card total">
+                <div class="a-card-icon">📋</div>
+                <div class="a-card-data">
+                    <span class="a-val" id="a-total">0</span>
+                    <span class="a-label">Total Violations</span>
+                </div>
+            </div>
+            <div class="a-card videos">
+                <div class="a-card-icon">🎬</div>
+                <div class="a-card-data">
+                    <span class="a-val" id="a-videos">0</span>
+                    <span class="a-label">Videos Processed</span>
+                </div>
+            </div>
+            <div class="a-card danger">
+                <div class="a-card-icon">🔴</div>
+                <div class="a-card-data">
+                    <span class="a-val" id="a-danger">0</span>
+                    <span class="a-label">Danger Events</span>
+                </div>
+            </div>
+            <div class="a-card warning">
+                <div class="a-card-icon">🟡</div>
+                <div class="a-card-data">
+                    <span class="a-val" id="a-warning">0</span>
+                    <span class="a-label">Warnings</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-row">
+            <div class="chart-panel" id="type-chart-panel">
+                <h3>Violations by Type</h3>
+                <div class="bar-chart" id="type-chart"></div>
+            </div>
+            <div class="chart-panel" id="risk-chart-panel">
+                <h3>Risk Distribution</h3>
+                <div class="donut-chart" id="risk-chart">
+                    <div class="donut-ring" id="donut-ring">
+                        <svg viewBox="0 0 36 36" class="donut-svg">
+                            <circle class="donut-bg" cx="18" cy="18" r="15.9" fill="none" stroke="#1a1d2e" stroke-width="3"/>
+                            <circle class="donut-segment danger-seg" id="seg-danger" cx="18" cy="18" r="15.9" fill="none" stroke="#ff3e5e" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"/>
+                            <circle class="donut-segment warning-seg" id="seg-warning" cx="18" cy="18" r="15.9" fill="none" stroke="#ffb020" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"/>
+                            <circle class="donut-segment safe-seg" id="seg-safe" cx="18" cy="18" r="15.9" fill="none" stroke="#00e676" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"/>
+                        </svg>
+                    </div>
+                    <div class="donut-legend" id="donut-legend"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Processed Videos Table -->
+        <div class="videos-panel">
+            <h3>📹 Processed Videos</h3>
+            <table class="videos-table" id="videos-table">
+                <thead>
+                    <tr>
+                        <th>Video Name</th>
+                        <th>Frames</th>
+                        <th>Violations</th>
+                        <th>Risk Level</th>
+                        <th>Duration</th>
+                        <th>Date Processed</th>
+                    </tr>
+                </thead>
+                <tbody id="videos-body">
+                    <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted)">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/static/js/analytics.js"></script>
+</body>
 </html>

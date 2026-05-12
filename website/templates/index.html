@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeSite AI — Construction Safety Monitoring</title>
+    <meta name="description" content="AI-powered construction site safety monitoring with real-time hazard detection.">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="nav" id="main-nav">
+        <div class="nav-brand">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <span>SafeSite AI</span>
+        </div>
+        <div class="nav-links">
+            <a href="/" class="active">Home</a>
+            <a href="/monitor">Live Monitor</a>
+            <a href="/alerts">Alerts</a>
+            <a href="/analytics">Analytics</a>
+        </div>
+        <a href="/monitor" class="nav-cta" id="nav-launch-btn">Launch Monitor</a>
+    </nav>
+
+    <section class="hero" id="hero-section">
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-content">
+            <div class="hero-badge"><span class="pulse-dot"></span>AI-POWERED SAFETY SYSTEM</div>
+            <h1 class="hero-title">
+                <span class="line">Construction Site</span>
+                <span class="line accent">Safety Monitoring</span>
+            </h1>
+            <p class="hero-sub">Real-time hazard detection using computer vision. Helmet compliance, fall prevention, danger zone monitoring — all in one intelligent platform.</p>
+            <div class="hero-actions">
+                <a href="/monitor" class="btn-primary" id="hero-launch-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Launch Monitor
+                </a>
+                <a href="#features" class="btn-ghost" id="hero-learn-btn">Learn More ↓</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat"><span class="stat-val">6+</span><span class="stat-lbl">Detection Types</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-val">30+</span><span class="stat-lbl">FPS Real-time</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-val">24/7</span><span class="stat-lbl">Monitoring</span></div>
+            </div>
+        </div>
+        <div class="scroll-indicator"><span>Scroll to explore</span>↓</div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header">
+            <span class="section-tag">CAPABILITIES</span>
+            <h2 class="section-title">Intelligent Detection Modules</h2>
+            <p class="section-sub">Six AI-powered modules working together for comprehensive site safety.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card" id="feature-helmet">
+                <div class="feature-icon red">⛑</div>
+                <h3>Helmet Detection</h3>
+                <p>YOLOv8-based PPE compliance checker detects workers without safety helmets in real-time.</p>
+                <span class="feature-tag red">CRITICAL</span>
+            </div>
+            <div class="feature-card" id="feature-vest">
+                <div class="feature-icon amber">🦺</div>
+                <h3>Vest Detection</h3>
+                <p>Identifies workers missing reflective safety jackets using overlap-based bounding box assignment.</p>
+                <span class="feature-tag amber">HIGH</span>
+            </div>
+            <div class="feature-card" id="feature-fall">
+                <div class="feature-icon cyan">🧍</div>
+                <h3>Fall Detection</h3>
+                <p>MediaPipe pose estimation detects horizontal body positions and confirms falls after sustained duration.</p>
+                <span class="feature-tag cyan">AI POSE</span>
+            </div>
+            <div class="feature-card" id="feature-edge">
+                <div class="feature-icon purple">⚠</div>
+                <h3>Edge / Height Danger</h3>
+                <p>Detects workers near elevation edges and height danger zones using spatial position analysis.</p>
+                <span class="feature-tag purple">ZONE</span>
+            </div>
+            <div class="feature-card" id="feature-falling-obj">
+                <div class="feature-icon green">📦</div>
+                <h3>Falling Objects</h3>
+                <p>Optical flow analysis detects fast-moving objects above workers that could cause injury.</p>
+                <span class="feature-tag green">OPTICAL</span>
+            </div>
+            <div class="feature-card" id="feature-motionless">
+                <div class="feature-icon red">🚨</div>
+                <h3>Motionless Detection</h3>
+                <p>Flags workers who remain motionless for extended periods, indicating potential unconsciousness.</p>
+                <span class="feature-tag red">EMERGENCY</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-header">
+            <span class="section-tag">PIPELINE</span>
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-sub">From video input to real-time safety intelligence in milliseconds.</p>
+        </div>
+        <div class="pipeline">
+            <div class="pipeline-step"><div class="step-number">01</div><div class="step-content"><h3>Video Input</h3><p>Upload footage or connect a live webcam feed.</p></div></div>
+            <div class="pipeline-connector"></div>
+            <div class="pipeline-step"><div class="step-number">02</div><div class="step-content"><h3>AI Processing</h3><p>YOLO + MediaPipe + Optical Flow analyze every frame.</p></div></div>
+            <div class="pipeline-connector"></div>
+            <div class="pipeline-step"><div class="step-number">03</div><div class="step-content"><h3>Detection & Alerts</h3><p>Violations flagged, scored, and streamed instantly.</p></div></div>
+            <div class="pipeline-connector"></div>
+            <div class="pipeline-step"><div class="step-number">04</div><div class="step-content"><h3>Record & Analyze</h3><p>All violations stored in MongoDB for review and analytics.</p></div></div>
+        </div>
+    </section>
+
+    <section class="cta" id="cta-section">
+        <div class="cta-glow"></div>
+        <div class="cta-content">
+            <h2>Ready to Monitor?</h2>
+            <p>Start protecting your workforce with AI-powered safety detection.</p>
+            <a href="/monitor" class="btn-primary large" id="cta-launch-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Launch Live Monitor
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer" id="main-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                <span>SafeSite AI</span>
+            </div>
+            <span class="footer-copy">AI-Based Smart Construction Site Safety Monitoring System</span>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="/static/js/scene.js"></script>
+</body>
+</html>
