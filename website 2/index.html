@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SCSS – Smart Construction Safety System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+
+    /* ===================== RESET & BASE ===================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0a0a0f;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ===================== NAVBAR ===================== */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 9999;
+      height: 70px;
+      background: rgba(10, 10, 15, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      transition: box-shadow 0.3s ease;
+    }
+    .navbar.scrolled {
+      box-shadow: 0 4px 30px rgba(0,0,0,0.8);
+    }
+    .nav-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 32px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .logo-icon-wrap {
+      width: 44px;
+      height: 44px;
+      background: rgba(250,204,21,0.1);
+      border: 1px solid rgba(250,204,21,0.25);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-text-wrap {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .logo-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #facc15;
+      letter-spacing: 1px;
+    }
+    .logo-tagline {
+      font-size: 0.58rem;
+      color: rgba(255,255,255,0.4);
+      font-weight: 400;
+      margin-top: 3px;
+      line-height: 1.3;
+    }
+
+    /* Nav Links */
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .nav-item {
+      position: relative;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.7);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: color 0.25s ease;
+    }
+    .nav-item::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 16px;
+      right: 16px;
+      height: 2px;
+      background: #facc15;
+      border-radius: 2px;
+      transform: scaleX(0);
+      transition: transform 0.25s ease;
+      transform-origin: center;
+    }
+    .nav-item:hover { color: #fff; }
+    .nav-item:hover::after { transform: scaleX(1); }
+    .nav-item.active { color: #facc15; font-weight: 600; }
+    .nav-item.active::after { transform: scaleX(1); }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+    .hamburger span {
+      display: block;
+      width: 26px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ===================== HERO ===================== */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      padding-top: 70px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      background: #0a0a0f;
+    }
+
+    /* Full-bleed background image */
+    .hero-bg-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center right;
+      opacity: 0.55;
+      /* ⬇ REPLACE THIS PATH with your actual hero image */
+      /* src is set in the HTML tag below */
+    }
+
+    /* Dark gradient overlay so left text is readable */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        100deg,
+        rgba(10,10,15,0.95) 0%,
+        rgba(10,10,15,0.80) 38%,
+        rgba(10,10,15,0.40) 65%,
+        rgba(10,10,15,0.10) 100%
+      );
+      z-index: 1;
+    }
+
+    /* Text content */
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 80px 32px 100px;
+      width: 100%;
+    }
+    .hero-inner {
+      max-width: 560px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(250,204,21,0.08);
+      border: 1px solid rgba(250,204,21,0.3);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #facc15;
+      margin-bottom: 28px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .hero-title {
+      font-size: clamp(2.6rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.5px;
+      margin-bottom: 22px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    .hero-title .yellow { color: #facc15; }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.7;
+      margin-bottom: 38px;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.28s ease;
+    }
+    .btn-yellow {
+      background: #facc15;
+      color: #0a0a0f;
+      border-color: #facc15;
+    }
+    .btn-yellow:hover {
+      background: #e6b800;
+      border-color: #e6b800;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(250,204,21,0.35);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: #fff;
+      border-color: rgba(255,255,255,0.3);
+    }
+    .btn-ghost:hover {
+      border-color: #facc15;
+      color: #facc15;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(250,204,21,0.15);
+    }
+
+    /* ===================== SECTION TITLE ===================== */
+    .section-label {
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      color: #facc15;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      text-align: center;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700;
+      margin-bottom: 48px;
+      color: #fff;
+    }
+    .section-title span { color: #facc15; }
+
+    /* ===================== FEATURE CARDS ===================== */
+    .features {
+      padding: 80px 32px;
+      background: #0a0a0f;
+    }
+    .features-grid {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .fcard {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      min-height: 270px;
+      display: flex;
+      align-items: flex-end;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: #fff;
+    }
+    .fcard:hover {
+      transform: translateY(-8px);
+      border-color: rgba(250,204,21,0.4);
+      box-shadow: 0 28px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(250,204,21,0.2);
+    }
+
+    /* Card background image */
+    .fcard-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center right;
+      opacity: 0.5;
+      transition: transform 0.5s ease, opacity 0.35s ease;
+    }
+    .fcard:hover .fcard-img {
+      transform: scale(1.07);
+      opacity: 0.65;
+    }
+
+    /* Fallback dark bg when no image */
+    .fcard-bg-fallback {
+      position: absolute;
+      inset: 0;
+    }
+    .fcard-bg-fallback.red {
+      background: linear-gradient(135deg,#120808 0%,#1e0c0c 50%,#0d0505 100%);
+    }
+    .fcard-bg-fallback.blue {
+      background: linear-gradient(135deg,#080912 0%,#0c1022 50%,#080a12 100%);
+    }
+    .fcard-bg-fallback.green {
+      background: linear-gradient(135deg,#080f0b 0%,#0c1c12 50%,#080e0a 100%);
+    }
+
+    /* Gradient over image so text is readable */
+    .fcard-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(8,8,12,0.92) 0%,
+        rgba(8,8,12,0.75) 45%,
+        rgba(8,8,12,0.20) 100%
+      );
+    }
+
+    /* Card text */
+    .fcard-body {
+      position: relative;
+      z-index: 2;
+      padding: 28px 28px 30px;
+      width: 100%;
+    }
+    .fcard-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .fcard-icon.red-icon   { background: rgba(239,68,68,0.18);  border: 1px solid rgba(239,68,68,0.35); }
+    .fcard-icon.blue-icon  { background: rgba(59,130,246,0.18); border: 1px solid rgba(59,130,246,0.35);}
+    .fcard-icon.green-icon { background: rgba(16,185,129,0.18); border: 1px solid rgba(16,185,129,0.35);}
+
+    .fcard-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .fcard-desc {
+      font-size: 0.84rem;
+      color: rgba(255,255,255,0.62);
+      line-height: 1.65;
+      margin-bottom: 22px;
+    }
+    .fcard-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.22);
+      font-size: 1.1rem;
+      color: #fff;
+      transition: all 0.28s ease;
+    }
+    .fcard:hover .fcard-arrow {
+      background: #facc15;
+      border-color: #facc15;
+      color: #0a0a0f;
+      transform: translateX(4px);
+    }
+
+    /* ===================== STATS ===================== */
+    .stats {
+      padding: 0 32px 80px;
+    }
+    .stats-box {
+      max-width: 1320px;
+      margin: 0 auto;
+      background: #111118;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr 1px 1fr 1px 1fr;
+      align-items: center;
+      padding: 36px 44px;
+    }
+    .stat-divider {
+      width: 1px;
+      height: 60px;
+      background: rgba(255,255,255,0.08);
+    }
+    .stat-cell {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 0 28px;
+    }
+    .stat-cell:first-child { padding-left: 0; }
+    .stat-cell:last-child  { padding-right: 0; }
+
+    .stat-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(250,204,21,0.1);
+      border: 1px solid rgba(250,204,21,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .stat-text { display: flex; flex-direction: column; gap: 3px; }
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+    }
+    .stat-num span { font-size: 2rem; font-weight: 800; }
+    .stat-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #fff;
+      margin-top: 5px;
+    }
+    .stat-hint {
+      font-size: 0.73rem;
+      color: rgba(255,255,255,0.38);
+    }
+
+    /* ===================== FOOTER ===================== */
+    .footer {
+      background: #0e0e14;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 28px 32px;
+    }
+    .footer-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-copy {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.35);
+      text-align: center;
+    }
+    .footer-socials { display: flex; gap: 10px; }
+    .soc-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.4);
+      transition: all 0.25s ease;
+    }
+    .soc-btn:hover {
+      border-color: #facc15;
+      color: #facc15;
+      background: rgba(250,204,21,0.08);
+    }
+
+    /* ===================== ANIMATIONS ===================== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes mobileSlide {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 1100px) {
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .stats-box {
+        grid-template-columns: 1fr 1fr;
+        padding: 28px 24px;
+        gap: 0;
+      }
+      .stat-divider { display: none; }
+      .stat-cell {
+        padding: 18px 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+      }
+      .stat-cell:nth-child(n+5) { border-bottom: none; }
+    }
+    @media (max-width: 768px) {
+      .nav-menu {
+        display: none;
+        position: absolute;
+        top: 70px; left: 0; right: 0;
+        flex-direction: column;
+        background: rgba(10,10,15,0.99);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        padding: 14px 0;
+        gap: 2px;
+        animation: mobileSlide 0.25s ease;
+      }
+      .nav-menu.open { display: flex; }
+      .nav-item { padding: 14px 28px; border-radius: 0; }
+      .nav-item::after { left: 28px; right: 28px; }
+      .hamburger { display: flex; }
+      .hero-content { padding: 50px 24px 70px; }
+      .hero-inner { max-width: 100%; }
+      .features { padding: 60px 20px; }
+      .features-grid { grid-template-columns: 1fr; gap: 16px; }
+      .stats { padding: 0 20px 60px; }
+      .stats-box { grid-template-columns: 1fr 1fr; padding: 20px; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .hero-title { font-size: 2.2rem; }
+      .hero-btns { flex-direction: column; }
+      .btn { justify-content: center; }
+      .stats-box { grid-template-columns: 1fr; }
+      .stat-cell { border-bottom: 1px solid rgba(255,255,255,0.06) !important; }
+      .stat-cell:last-child { border-bottom: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== NAVBAR ==================== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+
+    <!-- Logo -->
+    <a href="index.html" class="logo">
+      <div class="logo-icon-wrap">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+          <path d="M4 20 Q14 6 24 20" stroke="#facc15" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#facc15"/>
+          <circle cx="14" cy="11" r="3" fill="#facc15"/>
+        </svg>
+      </div>
+      <div class="logo-text-wrap">
+        <span class="logo-name">SCSS</span>
+        <span class="logo-tagline">Smart Construction<br/>Safety System</span>
+      </div>
+    </a>
+
+    <!-- Desktop Nav -->
+    <ul class="nav-menu" id="navMenu">
+      <li><a href="index.html"     class="nav-item active">Home</a></li>
+      <li><a href="live.html"      class="nav-item">Live Monitor</a></li>
+      <li><a href="alert.html"     class="nav-item">Alerts</a></li>
+      <li><a href="analytics.html" class="nav-item">Analytics</a></li>
+      <li><a href="about.html"     class="nav-item">About</a></li>
+      <li><a href="contact.html"   class="nav-item">Contact</a></li>
+    </ul>
+
+<button class="hamburger" id="hamburger" aria-label="Toggle menu">
+  <span></span><span></span><span></span>
+</button>
+  </div>
+</nav>
+
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+
+  <!--
+    ============================================================
+    IMAGE 1 – HERO BACKGROUND
+    Replace the src below with your construction site photo.
+    Example: src="images/hero-bg.jpg"
+    The image will cover the full right side of the hero.
+    ============================================================
+  -->
+  <img
+    class="hero-bg-img"
+    src="images/hero-bg.png"
+    alt="Construction site workers"
+    onerror="this.style.opacity='0'"
+  />
+
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-inner">
+
+      <div class="badge">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="#facc15">
+          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7l-9-5z"/>
+        </svg>
+        AI-Powered Safety Monitoring
+      </div>
+
+      <h1 class="hero-title">
+        Smart <span class="yellow">Construction</span><br/>Safety System
+      </h1>
+
+      <p class="hero-sub">
+        Real-time monitoring and intelligent analytics to ensure<br/>
+        safer construction sites and protect every worker.
+      </p>
+
+      <div class="hero-btns">
+        <a href="live.html" class="btn btn-yellow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+            <circle cx="12" cy="10" r="3" fill="currentColor"/>
+            <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Live Monitor
+        </a>
+        <a href="analytics.html" class="btn btn-ghost">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="12" width="4" height="9" rx="1" fill="currentColor"/>
+            <rect x="10" y="7" width="4" height="14" rx="1" fill="currentColor"/>
+            <rect x="17" y="3" width="4" height="18" rx="1" fill="currentColor"/>
+          </svg>
+          View Analytics
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== FEATURE CARDS ==================== -->
+<section class="features">
+  <div class="features-grid">
+
+    <!-- ── Card 1: Smart Alerts ── -->
+    <a href="alert.html" class="fcard reveal">
+      <div class="fcard-bg-fallback red"></div>
+      <!--
+        ============================================================
+        IMAGE 2 – SMART ALERTS CARD
+        Replace src with your alert/siren image.
+        Example: src="images/smart-alerts.jpg"
+        ============================================================
+      -->
+      <img
+        class="fcard-img"
+        src="images/smart-alerts.png"
+        alt="Smart Alerts"
+        onerror="this.style.display='none'"
+      />
+      <div class="fcard-overlay"></div>
+      <div class="fcard-body">
+        <div class="fcard-icon red-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+              fill="rgba(239,68,68,0.25)" stroke="#ef4444" stroke-width="1.8"/>
+            <line x1="12" y1="9" x2="12" y2="13" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="12" cy="17" r="1.2" fill="#ef4444"/>
+          </svg>
+        </div>
+        <h3 class="fcard-title">Smart Alerts</h3>
+        <p class="fcard-desc">Instant alerts for safety violations and hazards using AI detection.</p>
+        <span class="fcard-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Card 2: Live Monitor ── -->
+    <a href="live.html" class="fcard reveal" style="transition-delay:0.1s">
+      <div class="fcard-bg-fallback blue"></div>
+      <!--
+        ============================================================
+        IMAGE 3 – LIVE MONITOR CARD
+        Replace src with your workers/camera image.
+        Example: src="images/live-monitor.jpg"
+        ============================================================
+      -->
+      <img
+        class="fcard-img"
+        src="images/live-monitor.png"
+        alt="Live Monitor"
+        onerror="this.style.display='none'"
+      />
+      <div class="fcard-overlay"></div>
+      <div class="fcard-body">
+        <div class="fcard-icon blue-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <rect x="2" y="3" width="20" height="14" rx="2" stroke="#3b82f6" stroke-width="2"/>
+            <circle cx="12" cy="10" r="3" fill="#3b82f6"/>
+            <path d="M8 21h8M12 17v4" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="fcard-title">Live Monitor</h3>
+        <p class="fcard-desc">Real-time monitoring of construction sites 24/7 with AI cameras.</p>
+        <span class="fcard-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Card 3: Analytics ── -->
+    <a href="analytics.html" class="fcard reveal" style="transition-delay:0.2s">
+      <div class="fcard-bg-fallback green"></div>
+      <!--
+        ============================================================
+        IMAGE 4 – ANALYTICS CARD
+        Replace src with your analytics/charts image.
+        Example: src="images/analytics.jpg"
+        ============================================================
+      -->
+      <img
+        class="fcard-img"
+        src="images/analytics.png"
+        alt="Analytics"
+        onerror="this.style.display='none'"
+      />
+      <div class="fcard-overlay"></div>
+      <div class="fcard-body">
+        <div class="fcard-icon green-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <rect x="3"  y="12" width="4" height="9" rx="1" fill="#10b981"/>
+            <rect x="10" y="7"  width="4" height="14" rx="1" fill="#10b981"/>
+            <rect x="17" y="3"  width="4" height="18" rx="1" fill="#10b981"/>
+          </svg>
+        </div>
+        <h3 class="fcard-title">Analytics</h3>
+        <p class="fcard-desc">Detailed insights and reports to improve safety performance.</p>
+        <span class="fcard-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+
+<!-- ==================== STATS ==================== -->
+<section class="stats">
+  <div class="stats-box">
+
+    <div class="stat-cell reveal">
+      <div class="stat-icon-wrap">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="#facc15">
+          <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7l-9-5z"/>
+          <path d="M9 12l2 2 4-4" stroke="#0a0a0f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="stat-text">
+        <div class="stat-num"><span data-count="98">0</span>%</div>
+        <div class="stat-name">Detection Accuracy</div>
+        <div class="stat-hint">High AI prediction rate</div>
+      </div>
+    </div>
+
+    <div class="stat-divider"></div>
+
+    <div class="stat-cell reveal" style="transition-delay:0.1s">
+      <div class="stat-icon-wrap">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="3" width="20" height="14" rx="2" stroke="#facc15" stroke-width="2"/>
+          <circle cx="12" cy="10" r="3" fill="#facc15"/>
+        </svg>
+      </div>
+      <div class="stat-text">
+        <div class="stat-num">24/7</div>
+        <div class="stat-name">Live Monitoring</div>
+        <div class="stat-hint">Continuous site monitoring</div>
+      </div>
+    </div>
+
+    <div class="stat-divider"></div>
+
+    <div class="stat-cell reveal" style="transition-delay:0.2s">
+      <div class="stat-icon-wrap">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <circle cx="9"  cy="7" r="3" fill="#facc15"/>
+          <circle cx="15" cy="7" r="3" fill="#facc15" opacity="0.6"/>
+          <path d="M3 20c0-4 2.7-7 6-7h6c3.3 0 6 3 6 7"
+            stroke="#facc15" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="stat-text">
+        <div class="stat-num"><span data-count="150">0</span>+</div>
+        <div class="stat-name">Workers Protected</div>
+        <div class="stat-hint">Across all monitored sites</div>
+      </div>
+    </div>
+
+    <div class="stat-divider"></div>
+
+    <div class="stat-cell reveal" style="transition-delay:0.3s">
+      <div class="stat-icon-wrap">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+            fill="rgba(250,204,21,0.2)" stroke="#facc15" stroke-width="1.8"/>
+          <line x1="12" y1="9"  x2="12" y2="13" stroke="#facc15" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="12" cy="17" r="1.2" fill="#facc15"/>
+        </svg>
+      </div>
+      <div class="stat-text">
+        <div class="stat-num"><span data-count="120">0</span>+</div>
+        <div class="stat-name">Hazards Detected</div>
+        <div class="stat-hint">Prevented potential accidents</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+  <div class="footer-inner">
+
+    <a href="index.html" class="logo">
+      <div class="logo-icon-wrap">
+        <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+          <path d="M4 20 Q14 6 24 20" stroke="#facc15" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#facc15"/>
+          <circle cx="14" cy="11" r="3" fill="#facc15"/>
+        </svg>
+      </div>
+      <div class="logo-text-wrap">
+        <span class="logo-name">SCSS</span>
+        <span class="logo-tagline">Smart Construction<br/>Safety System</span>
+      </div>
+    </a>
+
+    <p class="footer-copy">© 2026 Smart Construction Safety System. All rights reserved.</p>
+
+    <div class="footer-socials">
+      <a href="#" class="soc-btn" aria-label="Facebook">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+        </svg>
+      </a>
+      <a href="#" class="soc-btn" aria-label="Twitter">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+        </svg>
+      </a>
+      <a href="#" class="soc-btn" aria-label="LinkedIn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+          <circle cx="4" cy="4" r="2"/>
+        </svg>
+      </a>
+      <a href="#" class="soc-btn" aria-label="Email">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <path d="M2 7l10 7 10-7"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+</footer>
+
+
+<script>
+  /* ── Navbar scroll shadow ── */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  /* ── Mobile hamburger ── */
+  const hamburger = document.getElementById('hamburger');
+  const navMenu   = document.getElementById('navMenu');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    navMenu.classList.toggle('open');
+  });
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      navMenu.classList.remove('open');
+    });
+  });
+
+  /* ── Scroll reveal ── */
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  /* ── Counter animation ── */
+  function runCounter(el, target, duration) {
+    let startTime = null;
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      el.textContent = Math.floor(eased * target);
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    }
+    requestAnimationFrame(step);
+  }
+
+  const counterObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        runCounter(el, parseInt(el.dataset.count), 1800);
+        counterObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.6 });
+
+  document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
+</script>
+
+</body>
+</html>

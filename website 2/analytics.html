@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SCSS – Analytics</title>
+  <link rel="stylesheet" href="css/analytics.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════ NAVBAR ═══════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-left">
+    <div class="logo-wrap">
+      <div class="logo-icon"><i class="fa-solid fa-helmet-safety"></i></div>
+      <div class="logo-text">
+        <span class="logo-title">SCSS</span>
+        <span class="logo-sub">Smart Construction Safety System</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-center" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="live.html">Live Monitor</a>
+    <a href="alert.html">Alerts</a>
+    <a href="analytics.html" class="active">Analytics</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+
+  
+</nav>
+
+<!-- ═══════════════════════════ MAIN ═══════════════════════════ -->
+<main class="main-content">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header fade-in">
+    <div class="page-header-left">
+      <h1 class="page-title">Analytics</h1>
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="bc-sep"><i class="fa-solid fa-chevron-right"></i></span>
+        <span>Analytics</span>
+      </nav>
+    </div>
+    <div class="page-header-right">
+      <div class="date-picker-btn">
+        <i class="fa-regular fa-calendar"></i>
+        <span>May 2 – May 8, 2026</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+      <button class="btn-outline-report">
+        <i class="fa-solid fa-download"></i> Download Report
+      </button>
+    </div>
+  </div>
+
+  <!-- SUMMARY CARDS -->
+  <section class="stats-grid stagger-in">
+
+    <div class="stat-card stat-blue">
+      <div class="stat-icon-wrap blue-glow">
+        <i class="fa-solid fa-users"></i>
+      </div>
+      <div class="stat-body">
+        <p class="stat-label">Total Workers</p>
+        <h2 class="stat-value" data-target="158">0</h2>
+        <p class="stat-delta green-delta"><i class="fa-solid fa-arrow-up"></i> 12 from last week</p>
+      </div>
+    </div>
+
+    <div class="stat-card stat-green">
+      <div class="stat-icon-wrap green-glow">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div class="stat-body">
+        <p class="stat-label">Compliance Rate</p>
+        <h2 class="stat-value" data-target="98" data-suffix="%">0%</h2>
+        <p class="stat-delta green-delta"><i class="fa-solid fa-arrow-up"></i> 4% from last week</p>
+      </div>
+    </div>
+
+    <div class="stat-card stat-red">
+      <div class="stat-icon-wrap red-glow">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div class="stat-body">
+        <p class="stat-label">Total Alerts</p>
+        <h2 class="stat-value" data-target="23">0</h2>
+        <p class="stat-delta red-delta"><i class="fa-solid fa-arrow-down"></i> 5 from last week</p>
+      </div>
+    </div>
+
+    <div class="stat-card stat-purple">
+      <div class="stat-icon-wrap purple-glow">
+        <i class="fa-solid fa-chart-bar"></i>
+      </div>
+      <div class="stat-body">
+        <p class="stat-label">Critical Alerts</p>
+        <h2 class="stat-value" data-target="7">0</h2>
+        <p class="stat-delta red-delta"><i class="fa-solid fa-arrow-down"></i> 2 from last week</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- CHARTS ROW 1 -->
+  <section class="charts-row fade-in-up">
+
+    <!-- Alerts Over Time -->
+    <div class="chart-card wide-card">
+      <div class="chart-card-header">
+        <h3 class="chart-title"><i class="fa-solid fa-chart-line"></i> Alerts Over Time</h3>
+        <div class="chart-badge red-badge">This Week</div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="alertsLineChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Alerts by Type -->
+    <div class="chart-card narrow-card">
+      <div class="chart-card-header">
+        <h3 class="chart-title"><i class="fa-solid fa-chart-pie"></i> Alerts by Type</h3>
+      </div>
+      <div class="donut-wrap">
+        <canvas id="alertsDonutChart"></canvas>
+        <div class="donut-center">
+          <span class="donut-total">23</span>
+          <span class="donut-label">Total</span>
+        </div>
+      </div>
+      <ul class="donut-legend" id="donutLegend"></ul>
+    </div>
+
+  </section>
+
+  <!-- CHARTS ROW 2 -->
+  <section class="charts-row fade-in-up delay-200">
+
+    <!-- Compliance Overview -->
+    <div class="chart-card narrow-card">
+      <div class="chart-card-header">
+        <h3 class="chart-title"><i class="fa-solid fa-chart-column"></i> Compliance Overview</h3>
+      </div>
+      <div class="chart-wrap chart-wrap-sm">
+        <canvas id="complianceBarChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent Insights -->
+    <div class="chart-card wide-card insights-card">
+      <div class="chart-card-header">
+        <h3 class="chart-title"><i class="fa-solid fa-lightbulb"></i> Recent Insights</h3>
+      </div>
+      <ul class="insights-list">
+        <li class="insight-item">
+          <div class="insight-icon green-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="insight-body">
+            <p class="insight-site">Site A</p>
+            <p class="insight-desc">Excellent compliance rate</p>
+          </div>
+          <span class="insight-time">Just now</span>
+        </li>
+        <li class="insight-item">
+          <div class="insight-icon red-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+          <div class="insight-body">
+            <p class="insight-site">Site B</p>
+            <p class="insight-desc">Helmet violations increased on Site B</p>
+          </div>
+          <span class="insight-time">10 min ago</span>
+        </li>
+        <li class="insight-item">
+          <div class="insight-icon orange-icon"><i class="fa-solid fa-fire"></i></div>
+          <div class="insight-body">
+            <p class="insight-site">Site C</p>
+            <p class="insight-desc">Fire risk detected in Storage Zone</p>
+          </div>
+          <span class="insight-time">25 min ago</span>
+        </li>
+      </ul>
+      <div class="insights-footer">
+        <button class="btn-view-all">View All Insights <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- INSIGHT BANNER -->
+  <section class="insight-banner fade-in-up delay-300">
+    <div class="banner-left">
+      <div class="banner-icon"><i class="fa-solid fa-lightbulb"></i></div>
+      <div class="banner-text">
+        <h4 class="banner-heading">Insight</h4>
+        <p class="banner-para">Compliance has improved by 4% compared to last week. Keep up the good work!</p>
+      </div>
+    </div>
+    <div class="banner-right">
+      <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300&q=80&auto=format&fit=crop" alt="Construction Workers" class="banner-img"/>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer class="footer">
+  <div class="footer-left">
+    <div class="footer-logo">
+      <div class="logo-icon sm"><i class="fa-solid fa-helmet-safety"></i></div>
+      <span class="footer-brand">SCSS</span>
+    </div>
+    <p class="footer-copy">© 2026 Smart Construction Safety System. All rights reserved.</p>
+  </div>
+  <div class="footer-socials">
+    <a href="#" class="social-link" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+    <a href="#" class="social-link" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+    <a href="#" class="social-link" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+    <a href="#" class="social-link" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+  </div>
+</footer>
+
+<script src="analytics.js"></script>
+</body>
+</html>

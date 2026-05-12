@@ -9,7 +9,7 @@
     const TYPE_COLORS = {
         'NO HELMET': 'red',
         'NO VEST': 'amber',
-        'FALL DETECTED': 'cyan',
+        'FALL DETECTED': 'yellow',
         'NEAR EDGE / HEIGHT DANGER': 'purple',
         'FALLING OBJECT!': 'red',
         'MOTIONLESS - CHECK PERSON': 'amber',
@@ -19,7 +19,7 @@
         for (const [key, color] of Object.entries(TYPE_COLORS)) {
             if (type.toUpperCase().includes(key.split(' ')[0])) return color;
         }
-        return 'cyan';
+        return 'yellow';
     }
 
     // ── Load Analytics Summary ──

@@ -5,20 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics — SafeSite AI</title>
     <meta name="description" content="Safety analytics dashboard with risk analysis and violation statistics.">
-    <link rel="stylesheet" href="/static/css/analytics.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/analytics.css?v={{ v }}">
 </head>
 <body>
     <nav class="nav">
-        <div class="nav-brand">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <a href="/" class="nav-brand">
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+                <path d="M4 20 Q14 6 24 20" stroke="#f2c200" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#f2c200"/>
+                <circle cx="14" cy="11" r="3" fill="#f2c200"/>
+            </svg>
             <span>SafeSite AI</span>
-        </div>
+        </a>
         <div class="nav-links">
             <a href="/">Home</a>
             <a href="/monitor">Live Monitor</a>
             <a href="/alerts">Alerts</a>
             <a href="/analytics" class="active">Analytics</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
         </div>
     </nav>
 
@@ -28,7 +33,6 @@
             <p>Aggregated risk analysis and violation statistics from all monitoring sessions.</p>
         </div>
 
-        <!-- Summary Cards -->
         <div class="analytics-summary" id="analytics-summary">
             <div class="a-card total">
                 <div class="a-card-icon">📋</div>
@@ -60,7 +64,6 @@
             </div>
         </div>
 
-        <!-- Charts -->
         <div class="charts-row">
             <div class="chart-panel" id="type-chart-panel">
                 <h3>Violations by Type</h3>
@@ -71,10 +74,10 @@
                 <div class="donut-chart" id="risk-chart">
                     <div class="donut-ring" id="donut-ring">
                         <svg viewBox="0 0 36 36" class="donut-svg">
-                            <circle class="donut-bg" cx="18" cy="18" r="15.9" fill="none" stroke="#1a1d2e" stroke-width="3"/>
-                            <circle class="donut-segment danger-seg" id="seg-danger" cx="18" cy="18" r="15.9" fill="none" stroke="#ff3e5e" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"/>
-                            <circle class="donut-segment warning-seg" id="seg-warning" cx="18" cy="18" r="15.9" fill="none" stroke="#ffb020" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"/>
-                            <circle class="donut-segment safe-seg" id="seg-safe" cx="18" cy="18" r="15.9" fill="none" stroke="#00e676" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"/>
+                            <circle class="donut-bg" cx="18" cy="18" r="15.9" fill="none" stroke="#1a1a1a" stroke-width="3"/>
+                            <circle class="donut-segment" id="seg-danger" cx="18" cy="18" r="15.9" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"/>
+                            <circle class="donut-segment" id="seg-warning" cx="18" cy="18" r="15.9" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"/>
+                            <circle class="donut-segment" id="seg-safe" cx="18" cy="18" r="15.9" fill="none" stroke="#22c55e" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"/>
                         </svg>
                     </div>
                     <div class="donut-legend" id="donut-legend"></div>
@@ -82,7 +85,6 @@
             </div>
         </div>
 
-        <!-- Processed Videos Table -->
         <div class="videos-panel">
             <h3>📹 Processed Videos</h3>
             <table class="videos-table" id="videos-table">
@@ -103,6 +105,6 @@
         </div>
     </div>
 
-    <script src="/static/js/analytics.js"></script>
+    <script src="/static/js/analytics.js?v={{ v }}"></script>
 </body>
 </html>

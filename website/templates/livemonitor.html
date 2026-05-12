@@ -5,20 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Monitor — SafeSite AI</title>
     <meta name="description" content="Real-time construction site safety monitoring with AI detection overlays.">
-    <link rel="stylesheet" href="/static/css/livemonitor.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/livemonitor.css?v={{ v }}">
 </head>
 <body>
     <nav class="nav">
-        <div class="nav-brand">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <a href="/" class="nav-brand">
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+                <path d="M4 20 Q14 6 24 20" stroke="#f2c200" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#f2c200"/>
+                <circle cx="14" cy="11" r="3" fill="#f2c200"/>
+            </svg>
             <span>SafeSite AI</span>
-        </div>
+        </a>
         <div class="nav-links">
             <a href="/">Home</a>
             <a href="/monitor" class="active">Live Monitor</a>
             <a href="/alerts">Alerts</a>
             <a href="/analytics">Analytics</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
         </div>
         <div class="nav-status" id="nav-status">
             <span class="status-dot offline" id="status-dot"></span>
@@ -27,26 +32,26 @@
     </nav>
 
     <div class="layout">
-        <!-- ═══ TOP SECTION: Video Input Controls ═══ -->
+        <!-- ═══ TOP: Video Input Controls ═══ -->
         <section class="input-section" id="input-section">
             <div class="input-header">
                 <h2>📹 Video Source</h2>
                 <div class="input-controls">
                     <label class="upload-btn" id="upload-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                         Upload Video
                         <input type="file" id="video-file-input" accept="video/*" hidden>
                     </label>
                     <button class="webcam-btn" id="webcam-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
                         Webcam
                     </button>
                     <button class="demo-btn" id="demo-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                         Demo Video
                     </button>
                     <button class="stop-btn" id="stop-btn" disabled>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
                         Stop
                     </button>
                 </div>
@@ -54,7 +59,7 @@
             <div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
         </section>
 
-        <!-- ═══ MIDDLE SECTION: Detection View ═══ -->
+        <!-- ═══ MIDDLE: Detection View ═══ -->
         <section class="detection-section" id="detection-section">
             <div class="video-panel" id="video-panel">
                 <div class="video-placeholder" id="video-placeholder">
@@ -84,9 +89,7 @@
                 </div>
                 <div class="stat-card risk">
                     <span class="stat-label">Risk Score</span>
-                    <div class="risk-gauge">
-                        <div class="risk-bar" id="risk-bar"></div>
-                    </div>
+                    <div class="risk-gauge"><div class="risk-bar" id="risk-bar"></div></div>
                     <span class="stat-value" id="stat-risk">0</span>
                 </div>
                 <div class="stat-card">
@@ -112,7 +115,20 @@
             </div>
         </section>
 
-        <!-- ═══ BOTTOM SECTION: Real-time Alerts ═══ -->
+        <!-- ═══ RISK GRAPH: Real-time danger level ═══ -->
+        <section class="risk-graph-section" id="risk-graph-section">
+            <div class="risk-graph-header">
+                <h3>📈 Real-time Risk Level</h3>
+                <div class="graph-legend">
+                    <span><span class="dot g"></span> Safe (0–30)</span>
+                    <span><span class="dot a"></span> Warning (30–60)</span>
+                    <span><span class="dot r"></span> Danger (60–100)</span>
+                </div>
+            </div>
+            <canvas id="risk-graph-canvas"></canvas>
+        </section>
+
+        <!-- ═══ BOTTOM: Real-time Alerts ═══ -->
         <section class="alerts-section" id="alerts-section">
             <div class="alerts-header">
                 <h3>🔔 Real-time Alerts</h3>
@@ -124,6 +140,6 @@
         </section>
     </div>
 
-    <script src="/static/js/monitor.js"></script>
+    <script src="/static/js/monitor.js?v={{ v }}"></script>
 </body>
 </html>

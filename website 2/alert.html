@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCSS – Alerts</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/alert.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Orbitron:wght@700;900&display=swap" rel="stylesheet" />
+</head>
+<body class="alert-page">
+
+  <!-- ══════════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+
+      <!-- Logo -->
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">
+          <i class="fas fa-hard-hat"></i>
+        </div>
+        <div class="logo-text">
+          <span class="logo-main">SCSS</span>
+          <span class="logo-sub">Smart Construction Safety System</span>
+        </div>
+      </a>
+
+      <!-- Hamburger -->
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <!-- Nav Links -->
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="live.html">Live Monitor</a></li>
+        <li><a href="alert.html" class="active">Alerts</a></li>
+        <li><a href="analytics.html">Analytics</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════
+       MAIN
+  ══════════════════════════════════════════ -->
+  <main class="alert-main">
+
+    <!-- ── Page Header ── -->
+    <section class="page-header fade-in">
+      <div class="header-left">
+        <h1 class="page-title">Alerts</h1>
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <span class="sep"><i class="fas fa-chevron-right"></i></span>
+          <span>Alerts</span>
+        </nav>
+      </div>
+      <div class="header-right">
+        <button class="btn-export">
+          <i class="fas fa-download"></i> Export Report
+        </button>
+      </div>
+    </section>
+
+    <!-- ── Summary Cards ── -->
+    <section class="summary-grid fade-in delay-1" aria-label="Alert summary">
+
+      <div class="summary-card danger">
+        <div class="sc-icon-wrap danger">
+          <i class="fas fa-triangle-exclamation"></i>
+        </div>
+        <div class="sc-body">
+          <span class="sc-number" data-target="23">0</span>
+          <span class="sc-label">Active Alerts</span>
+          <a href="#alertsTable" class="sc-link">View all</a>
+        </div>
+        <div class="sc-bg-glow danger"></div>
+      </div>
+
+      <div class="summary-card warning">
+        <div class="sc-icon-wrap warning">
+          <i class="fas fa-circle-exclamation"></i>
+        </div>
+        <div class="sc-body">
+          <span class="sc-number" data-target="15">0</span>
+          <span class="sc-label">High Priority</span>
+          <a href="#alertsTable" class="sc-link">View all</a>
+        </div>
+        <div class="sc-bg-glow warning"></div>
+      </div>
+
+      <div class="summary-card accent">
+        <div class="sc-icon-wrap accent">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="sc-body">
+          <span class="sc-number" data-target="8">0</span>
+          <span class="sc-label">Medium Priority</span>
+          <a href="#alertsTable" class="sc-link">View all</a>
+        </div>
+        <div class="sc-bg-glow accent"></div>
+      </div>
+
+      <div class="summary-card safe">
+        <div class="sc-icon-wrap safe">
+          <i class="fas fa-shield-halved"></i>
+        </div>
+        <div class="sc-body">
+          <span class="sc-number" data-target="128">0</span>
+          <span class="sc-label">Resolved Today</span>
+          <a href="#alertsTable" class="sc-link">View all</a>
+        </div>
+        <div class="sc-bg-glow safe"></div>
+      </div>
+
+    </section>
+
+    <!-- ── Active Alerts Table ── -->
+    <section class="glass-card alerts-table-card fade-in delay-2" id="alertsTable">
+
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="fas fa-bell-concierge"></i> Active Alerts
+        </h2>
+        <div class="table-controls">
+          <div class="search-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" id="alertSearch" placeholder="Search alerts…" aria-label="Search alerts" />
+          </div>
+          <button class="btn-filter" aria-label="Filter">
+            <i class="fas fa-sliders"></i> Filter
+          </button>
+        </div>
+      </div>
+
+      <div class="table-scroll">
+        <table class="alerts-table" id="alertsTableEl">
+          <thead>
+            <tr>
+              <th>Alert</th>
+              <th>Location</th>
+              <th>Time</th>
+              <th>Severity</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr class="alert-row" data-severity="high">
+              <td>
+                <div class="alert-cell">
+                  <div class="alert-icon-dot danger"><i class="fas fa-xmark-circle"></i></div>
+                  <div class="alert-info">
+                    <span class="alert-name">Helmet Not Detected</span>
+                    <span class="alert-id">Worker ID: W-1021</span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="location-text">Site A – Zone 1</span></td>
+              <td><span class="time-text">Today, 10:24 AM</span></td>
+              <td><span class="badge high">High</span></td>
+              <td><span class="badge-status active">Active</span></td>
+            </tr>
+
+            <tr class="alert-row" data-severity="high">
+              <td>
+                <div class="alert-cell">
+                  <div class="alert-icon-dot danger"><i class="fas fa-person-circle-xmark"></i></div>
+                  <div class="alert-info">
+                    <span class="alert-name">Worker in Restricted Area</span>
+                    <span class="alert-id">Worker ID: W-2055</span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="location-text">Site B – Zone 3</span></td>
+              <td><span class="time-text">Today, 10:18 AM</span></td>
+              <td><span class="badge high">High</span></td>
+              <td><span class="badge-status active">Active</span></td>
+            </tr>
+
+            <tr class="alert-row" data-severity="medium">
+              <td>
+                <div class="alert-cell">
+                  <div class="alert-icon-dot warning"><i class="fas fa-vest"></i></div>
+                  <div class="alert-info">
+                    <span class="alert-name">No Safety Vest Detected</span>
+                    <span class="alert-id">Worker ID: W-3098</span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="location-text">Site A – Zone 2</span></td>
+              <td><span class="time-text">Today, 10:12 AM</span></td>
+              <td><span class="badge medium">Medium</span></td>
+              <td><span class="badge-status active">Active</span></td>
+            </tr>
+
+            <tr class="alert-row" data-severity="high">
+              <td>
+                <div class="alert-cell">
+                  <div class="alert-icon-dot danger"><i class="fas fa-fire"></i></div>
+                  <div class="alert-info">
+                    <span class="alert-name">Fire Risk Detected</span>
+                    <span class="alert-id">Area: Storage Zone</span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="location-text">Site C – Zone 1</span></td>
+              <td><span class="time-text">Today, 09:58 AM</span></td>
+              <td><span class="badge high">High</span></td>
+              <td><span class="badge-status active">Active</span></td>
+            </tr>
+
+            <tr class="alert-row" data-severity="medium">
+              <td>
+                <div class="alert-cell">
+                  <div class="alert-icon-dot accent"><i class="fas fa-circle-info"></i></div>
+                  <div class="alert-info">
+                    <span class="alert-name">PPE Compliance Warning</span>
+                    <span class="alert-id">Multiple Workers</span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="location-text">Site B – Zone 2</span></td>
+              <td><span class="time-text">Today, 09:45 AM</span></td>
+              <td><span class="badge medium">Medium</span></td>
+              <td><span class="badge-status active">Active</span></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- View All Button -->
+      <div class="table-footer">
+        <button class="btn-view-all">
+          View All Alerts <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ── Safety Tip Card ── -->
+    <section class="safety-tip-card glass-card fade-in delay-3" aria-label="Safety tip">
+      <div class="tip-left">
+        <div class="tip-icon-wrap">
+          <i class="fas fa-shield-halved"></i>
+        </div>
+        <div class="tip-content">
+          <h3 class="tip-heading">Safety Tip</h3>
+          <p class="tip-body">
+            Always wear your safety gear and follow the site guidelines to ensure a safe work environment.
+          </p>
+        </div>
+      </div>
+      <div class="tip-right">
+        <img
+          src="https://png.pngtree.com/png-clipart/20231001/original/pngtree-yellow-construction-safety-helmet-png-image_13118476.png"
+          alt="Safety Helmet"
+          class="tip-helmet"
+        />
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <div class="footer-logo">
+          <div class="logo-icon small"><i class="fas fa-hard-hat"></i></div>
+          <span class="logo-main">SCSS</span>
+        </div>
+        <p class="footer-copy">© 2026 Smart Construction Safety System. All rights reserved.</p>
+      </div>
+      <div class="footer-right">
+        <a href="#" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-icon" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" class="social-icon" aria-label="Email"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/alert.js"></script>
+</body>
+</html>

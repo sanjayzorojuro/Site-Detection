@@ -29,7 +29,7 @@ from detection_pipeline import SafetyDetector
 from backend.database import (
     insert_violation, get_violations, get_violation_count,
     get_analytics_summary, insert_processed_video, get_processed_videos,
-    clear_violations
+    clear_violations, clear_all_data
 )
 
 # ─── Logging Setup ────────────────────────────────────────────────────────────
@@ -57,6 +57,23 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 
 app.mount("/static", StaticFiles(directory=str(WEBSITE_DIR / "static")), name="static")
 templates = Jinja2Templates(directory=str(WEBSITE_DIR / "templates"))
+
+# ─── Cache Busting ────────────────────────────────────────────────────────────
+# Inject a version timestamp so CSS/JS URLs always bust browser cache
+_CACHE_BUST = str(int(time.time()))
+templates.env.globals["v"] = _CACHE_BUST
+
+@app.middleware("http")
+async def no_cache_static(request: Request, call_next):
+    """Prevent browser caching of CSS/JS static files during development."""
+    response = await call_next(request)
+    if request.url.path.startswith("/static/") and (
+        request.url.path.endswith(".css") or request.url.path.endswith(".js")
+    ):
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
 
 # ─── Global State ─────────────────────────────────────────────────────────────
 detector = None  # Lazy-loaded SafetyDetector
@@ -95,6 +112,16 @@ def get_detector():
     return detector
 
 
+# ─── Startup Event: Clear old data ────────────────────────────────────────────
+
+@app.on_event("startup")
+async def on_startup():
+    """Clear all stored violations and analytics on every server start."""
+    logger.info("Server starting — clearing previous session data...")
+    clear_all_data()
+    logger.info("Previous session data cleared.")
+
+
 # ─── Page Routes ──────────────────────────────────────────────────────────────
 
 @app.get("/", response_class=HTMLResponse)
@@ -121,112 +148,135 @@ async def analytics_page(request: Request):
     return templates.TemplateResponse(request, "analytics.html")
 
 
+@app.get("/about", response_class=HTMLResponse)
+async def about_page(request: Request):
+    """Serve the about page."""
+    return templates.TemplateResponse(request, "about.html")
+
+
+@app.get("/contact", response_class=HTMLResponse)
+async def contact_page(request: Request):
+    """Serve the contact page."""
+    return templates.TemplateResponse(request, "contact.html")
+
+
 # ─── Video Processing ────────────────────────────────────────────────────────
 
 def _process_video(video_path: str, video_name: str):
     """Background thread: process video frames through the detection pipeline."""
     global state
-    det = get_detector()
-    det.reset()
-
-    cap = cv2.VideoCapture(video_path)
-    if not cap.isOpened():
-        logger.error(f"Cannot open video: {video_path}")
-        state.is_processing = False
-        return
-
-    state.total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    video_fps = cap.get(cv2.CAP_PROP_FPS) or 25
-    state.video_name = video_name
-    state.source_type = "video"
-    state.start_time = time.time()
-    state.frame_count = 0
-    state.session_alerts = []
-
-    # Track which violations have been reported to avoid duplicates
-    last_violations_per_person = {}
-
-    logger.info(f"Processing video: {video_name} ({state.total_frames} frames at {video_fps} fps)")
-
-    while cap.isOpened() and not state.stop_flag:
-        ret, frame = cap.read()
-        if not ret:
-            break
-
-        state.frame_count += 1
-        annotated_frame, detections = det.process_frame(frame)
-
-        # Encode frame as JPEG for streaming
-        _, jpeg = cv2.imencode(".jpg", annotated_frame, [cv2.IMWRITE_JPEG_QUALITY, 75])
-        state.current_frame = jpeg.tobytes()
-        state.latest_detections = detections
-        state.fps = det.fps_display
-        state.risk_score = SafetyDetector.get_risk_score(detections)
-        state.session_stats = SafetyDetector.get_stats(detections)
-
-        # Generate alerts for new violations
-        for det_item in detections:
-            if det_item["dangers"]:
-                pid = det_item["person_id"]
-                current_dangers = tuple(sorted(det_item["dangers"]))
-                prev_dangers = last_violations_per_person.get(pid)
-
-                if current_dangers != prev_dangers:
-                    last_violations_per_person[pid] = current_dangers
-                    for danger in det_item["dangers"]:
-                        alert = {
-                            "id": str(uuid.uuid4()),
-                            "type": danger,
-                            "risk_level": det_item["risk_level"],
-                            "person_id": pid,
-                            "timestamp": datetime.now(timezone.utc).isoformat(),
-                            "frame_number": state.frame_count,
-                            "video_name": video_name,
-                        }
-                        state.session_alerts.append(alert)
-                        # Keep session alerts manageable
-                        if len(state.session_alerts) > 500:
-                            state.session_alerts = state.session_alerts[-300:]
-
-                        # Store in MongoDB
-                        try:
-                            insert_violation(
-                                video_name=video_name,
-                                violation_type=danger,
-                                risk_level=det_item["risk_level"],
-                                person_id=pid,
-                                bbox=det_item["bbox"],
-                                details=", ".join(det_item["dangers"]),
-                                frame_number=state.frame_count,
-                            )
-                        except Exception as e:
-                            logger.warning(f"DB insert failed: {e}")
-
-                        # Broadcast to WebSocket clients
-                        _broadcast_alert(alert)
-            else:
-                last_violations_per_person.pop(det_item["person_id"], None)
-
-        # Throttle to approximate real-time playback
-        time.sleep(max(0.001, 1.0 / video_fps - 0.01))
-
-    cap.release()
-
-    # Record processed video in DB
     try:
-        duration = time.time() - (state.start_time or time.time())
-        insert_processed_video(
-            video_name=video_name,
-            total_frames=state.frame_count,
-            total_violations=len(state.session_alerts),
-            risk_level="danger" if state.risk_score > 50 else ("warning" if state.risk_score > 20 else "low"),
-            duration_seconds=round(duration, 1),
-        )
+        det = get_detector()
+        det.reset()
+
+        cap = cv2.VideoCapture(video_path)
+        if not cap.isOpened():
+            logger.error(f"Cannot open video: {video_path}")
+            state.is_processing = False
+            return
+
+        state.total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        video_fps = cap.get(cv2.CAP_PROP_FPS) or 25
+        state.video_name = video_name
+        state.source_type = "video"
+        state.start_time = time.time()
+        state.frame_count = 0
+        state.session_alerts = []
+
+        # Track which violations have been reported to avoid duplicates
+        last_violations_per_person = {}
+
+        logger.info(f"Processing video: {video_name} ({state.total_frames} frames at {video_fps} fps)")
+
+        while cap.isOpened() and not state.stop_flag:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            state.frame_count += 1
+            frame_start = time.time()
+            annotated_frame, detections = det.process_frame(frame)
+
+            # Encode frame as JPEG for streaming
+            _, jpeg = cv2.imencode(".jpg", annotated_frame, [cv2.IMWRITE_JPEG_QUALITY, 75])
+            state.current_frame = jpeg.tobytes()
+            state.latest_detections = detections
+            state.fps = det.fps_display
+            state.risk_score = SafetyDetector.get_risk_score(detections)
+            state.session_stats = SafetyDetector.get_stats(detections)
+
+            # Generate alerts for new violations
+            for det_item in detections:
+                if det_item["dangers"]:
+                    pid = det_item["person_id"]
+                    current_dangers = tuple(sorted(det_item["dangers"]))
+                    prev_dangers = last_violations_per_person.get(pid)
+
+                    if current_dangers != prev_dangers:
+                        last_violations_per_person[pid] = current_dangers
+                        for danger in det_item["dangers"]:
+                            alert = {
+                                "id": str(uuid.uuid4()),
+                                "type": danger,
+                                "risk_level": det_item["risk_level"],
+                                "person_id": pid,
+                                "timestamp": datetime.now().isoformat(),
+                                "frame_number": state.frame_count,
+                                "video_name": video_name,
+                            }
+                            state.session_alerts.append(alert)
+                            # Keep session alerts manageable
+                            if len(state.session_alerts) > 500:
+                                state.session_alerts = state.session_alerts[-300:]
+
+                            # Store in MongoDB
+                            try:
+                                insert_violation(
+                                    video_name=video_name,
+                                    violation_type=danger,
+                                    risk_level=det_item["risk_level"],
+                                    person_id=pid,
+                                    bbox=det_item["bbox"],
+                                    details=", ".join(det_item["dangers"]),
+                                    frame_number=state.frame_count,
+                                )
+                            except Exception as e:
+                                logger.warning(f"DB insert failed: {e}")
+
+                            # Broadcast to WebSocket clients
+                            _broadcast_alert(alert)
+                else:
+                    last_violations_per_person.pop(det_item["person_id"], None)
+
+            # Throttle to match real-time playback speed
+            # Subtract actual processing time so the video plays at native FPS
+            frame_time = time.time() - frame_start
+            target_delay = 1.0 / video_fps
+            sleep_time = target_delay - frame_time
+            if sleep_time > 0.001:
+                time.sleep(sleep_time)
+
+        cap.release()
+
+        # Record processed video in DB
+        try:
+            duration = time.time() - (state.start_time or time.time())
+            insert_processed_video(
+                video_name=video_name,
+                total_frames=state.frame_count,
+                total_violations=len(state.session_alerts),
+                risk_level="danger" if state.risk_score > 50 else ("warning" if state.risk_score > 20 else "low"),
+                duration_seconds=round(duration, 1),
+            )
+        except Exception as e:
+            logger.warning(f"Failed to record processed video: {e}")
+
     except Exception as e:
-        logger.warning(f"Failed to record processed video: {e}")
+        logger.error(f"Video processing CRASHED: {e}", exc_info=True)
 
     state.is_processing = False
     state.stop_flag = False
+    state.current_frame = None
     logger.info(f"Finished processing {video_name}: {state.frame_count} frames, {len(state.session_alerts)} alerts")
 
 
@@ -282,7 +332,7 @@ def _process_webcam():
                             "type": danger,
                             "risk_level": det_item["risk_level"],
                             "person_id": pid,
-                            "timestamp": datetime.now(timezone.utc).isoformat(),
+                            "timestamp": datetime.now().isoformat(),
                             "frame_number": state.frame_count,
                             "video_name": "Webcam Live",
                         }
@@ -308,6 +358,7 @@ def _process_webcam():
     cap.release()
     state.is_processing = False
     state.stop_flag = False
+    state.current_frame = None
     logger.info("Webcam feed stopped")
 
 
@@ -371,25 +422,32 @@ async def start_webcam():
 async def stop_processing():
     """Stop the current processing session."""
     state.stop_flag = True
-    return {"status": "stopping"}
+    # Give the processing thread a moment to notice the flag, then force-clear
+    state.current_frame = None
+    state.is_processing = False
+    return {"status": "stopped"}
 
 
 @app.get("/api/video-feed")
 async def video_feed():
     """MJPEG stream of the processed video with detection overlays."""
-    def generate():
-        while state.is_processing or state.current_frame is not None:
-            if state.current_frame is not None:
+    async def generate():
+        # Wait up to 10 seconds for first frame to appear
+        waited = 0
+        while state.is_processing and state.current_frame is None and waited < 10:
+            await asyncio.sleep(0.1)
+            waited += 0.1
+
+        while state.is_processing:
+            frame = state.current_frame
+            if frame is not None:
                 yield (
                     b"--frame\r\n"
                     b"Content-Type: image/jpeg\r\n\r\n" +
-                    state.current_frame +
+                    frame +
                     b"\r\n"
                 )
-            else:
-                # Yield a tiny placeholder while waiting for first frame
-                time.sleep(0.05)
-            time.sleep(0.03)  # ~30fps cap for streaming
+            await asyncio.sleep(0.033)  # ~30fps cap
 
     return StreamingResponse(
         generate(),

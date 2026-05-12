@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCSS – Live Monitor</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/live.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Orbitron:wght@700;900&display=swap" rel="stylesheet" />
+</head>
+<body class="live-page">
+
+  <!-- ══════════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+
+      <!-- Logo -->
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">
+          <i class="fas fa-hard-hat"></i>
+        </div>
+        <div class="logo-text">
+          <span class="logo-main">SCSS</span>
+          <span class="logo-sub">Smart Construction Safety System</span>
+        </div>
+      </a>
+
+      <!-- Hamburger -->
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <!-- Links -->
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="live.html" class="active">Live Monitor</a></li>
+        <li><a href="alert.html">Alerts</a></li>
+        <li><a href="analytics.html">Analytics</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════════ -->
+  <main class="live-main">
+
+    <!-- Page Header -->
+    <section class="page-header fade-in">
+      <div class="header-left">
+        <h1 class="page-title">Live Monitor</h1>
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <span class="sep"><i class="fas fa-chevron-right"></i></span>
+          <span>Live Monitor</span>
+        </nav>
+      </div>
+      <div class="header-right">
+        <div class="status-live">
+          <span class="live-dot"></span>
+          <span>All Systems Live</span>
+        </div>
+        <button class="btn-add-camera">
+          <i class="fas fa-plus"></i> Add Camera
+        </button>
+      </div>
+    </section>
+
+    <!-- Filter + View Mode -->
+    <section class="filter-bar fade-in delay-1">
+      <div class="filter-pills">
+        <button class="pill active" data-filter="all">All Cameras</button>
+        <button class="pill" data-filter="site-a">Site A</button>
+        <button class="pill" data-filter="site-b">Site B</button>
+        <button class="pill" data-filter="site-c">Site C</button>
+      </div>
+      <div class="view-modes">
+        <button class="view-btn active" data-view="grid" aria-label="Grid view"><i class="fas fa-th"></i></button>
+        <button class="view-btn" data-view="list" aria-label="List view"><i class="fas fa-list"></i></button>
+        <button class="view-btn" data-view="expand" aria-label="Expand view"><i class="fas fa-expand"></i></button>
+      </div>
+    </section>
+
+    <!-- Camera Grid -->
+    <section class="camera-grid" id="cameraGrid">
+
+      <!-- Camera 1 -->
+      <div class="camera-card fade-in delay-1" data-site="site-a">
+        <div class="cam-header">
+          <span class="cam-title"><i class="fas fa-video"></i> Camera 1 – Site A</span>
+          <span class="live-badge"><span class="live-pulse"></span>LIVE</span>
+        </div>
+        <div class="cam-feed" style="background-image:url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=700&q=80')">
+          <div class="feed-overlay"></div>
+          <div class="cam-frame">
+            <span class="frame-corner tl"></span>
+            <span class="frame-corner tr"></span>
+            <span class="frame-corner bl"></span>
+            <span class="frame-corner br"></span>
+          </div>
+          <!-- Detection boxes -->
+          <div class="detect-box safe" style="top:30%;left:15%;width:22%;height:38%">
+            <span class="detect-label safe"><i class="fas fa-check-circle"></i> Safe</span>
+          </div>
+          <div class="detect-box safe" style="top:28%;left:52%;width:20%;height:40%">
+            <span class="detect-label safe"><i class="fas fa-check-circle"></i> Safe</span>
+          </div>
+          <div class="cam-bottom">
+            <span class="cam-time" id="time1">10:24:35 AM</span>
+            <span class="cam-status-dot green"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Camera 2 -->
+      <div class="camera-card fade-in delay-2" data-site="site-a">
+        <div class="cam-header">
+          <span class="cam-title"><i class="fas fa-video"></i> Camera 2 – Site A</span>
+          <span class="live-badge"><span class="live-pulse"></span>LIVE</span>
+        </div>
+        <div class="cam-feed" style="background-image:url('https://images.unsplash.com/photo-1590644365607-04de0f4e8571?w=700&q=80')">
+          <div class="feed-overlay"></div>
+          <div class="cam-frame">
+            <span class="frame-corner tl"></span>
+            <span class="frame-corner tr"></span>
+            <span class="frame-corner bl"></span>
+            <span class="frame-corner br"></span>
+          </div>
+          <div class="detect-box danger" style="top:25%;left:30%;width:30%;height:45%">
+            <span class="detect-label danger"><i class="fas fa-exclamation-triangle"></i> No Helmet</span>
+          </div>
+          <div class="cam-bottom">
+            <span class="cam-time" id="time2">10:24:35 AM</span>
+            <span class="cam-status-dot green"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Camera 3 -->
+      <div class="camera-card fade-in delay-3" data-site="site-b">
+        <div class="cam-header">
+          <span class="cam-title"><i class="fas fa-video"></i> Camera 3 – Site B</span>
+          <span class="live-badge"><span class="live-pulse"></span>LIVE</span>
+        </div>
+        <div class="cam-feed" style="background-image:url('https://images.unsplash.com/photo-1567793905203-0e1a2f0b8073?w=700&q=80')">
+          <div class="feed-overlay"></div>
+          <div class="cam-frame">
+            <span class="frame-corner tl"></span>
+            <span class="frame-corner tr"></span>
+            <span class="frame-corner bl"></span>
+            <span class="frame-corner br"></span>
+          </div>
+          <div class="detect-box warning" style="top:35%;left:20%;width:55%;height:40%">
+            <span class="detect-label warning"><i class="fas fa-ban"></i> Restricted Area</span>
+          </div>
+          <div class="cam-bottom">
+            <span class="cam-time" id="time3">10:24:35 AM</span>
+            <span class="cam-status-dot green"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Camera 4 -->
+      <div class="camera-card fade-in delay-4" data-site="site-c">
+        <div class="cam-header">
+          <span class="cam-title"><i class="fas fa-video"></i> Camera 4 – Site C</span>
+          <span class="live-badge"><span class="live-pulse"></span>LIVE</span>
+        </div>
+        <div class="cam-feed" style="background-image:url('https://images.unsplash.com/photo-1581093804475-577d72e35330?w=700&q=80')">
+          <div class="feed-overlay"></div>
+          <div class="cam-frame">
+            <span class="frame-corner tl"></span>
+            <span class="frame-corner tr"></span>
+            <span class="frame-corner bl"></span>
+            <span class="frame-corner br"></span>
+          </div>
+          <div class="detect-box safe" style="top:30%;left:25%;width:48%;height:40%">
+            <span class="detect-label safe"><i class="fas fa-check-circle"></i> Safe</span>
+          </div>
+          <div class="cam-bottom">
+            <span class="cam-time" id="time4">10:24:35 AM</span>
+            <span class="cam-status-dot green"></span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Bottom Panels -->
+    <section class="bottom-panels fade-in delay-2">
+
+      <!-- Recent Detections -->
+      <div class="glass-card recent-detections">
+        <div class="card-header">
+          <h2 class="card-title"><i class="fas fa-radar"></i> Recent Detections</h2>
+          <a href="alert.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <ul class="detection-list">
+          <li class="detection-item">
+            <div class="det-icon danger"><i class="fas fa-hard-hat"></i></div>
+            <div class="det-info">
+              <span class="det-title">No Helmet Detected</span>
+              <span class="det-sub">Camera 2 – Site A</span>
+            </div>
+            <span class="det-time">10:24 AM</span>
+          </li>
+          <li class="detection-item">
+            <div class="det-icon warning"><i class="fas fa-ban"></i></div>
+            <div class="det-info">
+              <span class="det-title">Worker in Restricted Area</span>
+              <span class="det-sub">Camera 3 – Site B</span>
+            </div>
+            <span class="det-time">10:18 AM</span>
+          </li>
+          <li class="detection-item">
+            <div class="det-icon warning"><i class="fas fa-vest"></i></div>
+            <div class="det-info">
+              <span class="det-title">No Safety Vest Detected</span>
+              <span class="det-sub">Camera 1 – Site A</span>
+            </div>
+            <span class="det-time">10:12 AM</span>
+          </li>
+          <li class="detection-item">
+            <div class="det-icon safe"><i class="fas fa-shield-alt"></i></div>
+            <div class="det-info">
+              <span class="det-title">All Clear</span>
+              <span class="det-sub">Camera 4 – Site C</span>
+            </div>
+            <span class="det-time">10:10 AM</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Coverage Overview -->
+      <div class="glass-card coverage-overview">
+        <div class="card-header">
+          <h2 class="card-title"><i class="fas fa-satellite-dish"></i> Coverage Overview</h2>
+        </div>
+        <div class="donut-wrap">
+          <canvas id="donutChart" width="200" height="200"></canvas>
+          <div class="donut-center">
+            <span class="donut-num">16</span>
+            <span class="donut-label">Total Cameras</span>
+          </div>
+        </div>
+        <ul class="donut-legend">
+          <li><span class="legend-dot" style="background:#22c55e;box-shadow:0 0 8px #22c55e"></span><span>Live</span><strong>14 <em>(87%)</em></strong></li>
+          <li><span class="legend-dot" style="background:#ef4444;box-shadow:0 0 8px #ef4444"></span><span>Offline</span><strong>1 <em>(6%)</em></strong></li>
+          <li><span class="legend-dot" style="background:#f5b400;box-shadow:0 0 8px #f5b400"></span><span>Maintenance</span><strong>1 <em>(6%)</em></strong></li>
+        </ul>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <div class="footer-logo">
+          <div class="logo-icon small"><i class="fas fa-hard-hat"></i></div>
+          <span class="logo-main">SCSS</span>
+        </div>
+        <p class="footer-copy">© 2026 Smart Construction Safety System. All rights reserved.</p>
+      </div>
+      <div class="footer-right">
+        <a href="#" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-icon" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" class="social-icon" aria-label="Email"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/live.js"></script>
+</body>
+</html>

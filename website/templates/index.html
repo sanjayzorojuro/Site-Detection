@@ -1,43 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SafeSite AI — Construction Safety Monitoring</title>
-    <meta name="description" content="AI-powered construction site safety monitoring with real-time hazard detection.">
-    <link rel="stylesheet" href="/static/css/index.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>SafeSite AI — Smart Construction Safety System</title>
+    <meta name="description"
+        content="AI-powered construction site safety monitoring with real-time hazard detection, helmet compliance, and fall prevention.">
+    <link rel="stylesheet" href="/static/css/index.css?v={{ v }}">
 </head>
+
 <body>
-    <nav class="nav" id="main-nav">
-        <div class="nav-brand">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-            <span>SafeSite AI</span>
+
+    <!-- ═══════════ NAVBAR ═══════════ -->
+    <nav class="nav" id="navbar">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand">
+                <div class="nav-logo-icon">
+                    <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+                        <path d="M4 20 Q14 6 24 20" stroke="#f2c200" stroke-width="2.5" fill="none"
+                            stroke-linecap="round" />
+                        <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#f2c200" />
+                        <circle cx="14" cy="11" r="3" fill="#f2c200" />
+                    </svg>
+                </div>
+                <div class="nav-brand-text">
+                    <span class="nav-brand-name">SafeSite AI</span>
+                    <span class="nav-brand-sub">Smart Construction Safety</span>
+                </div>
+            </a>
+
+            <div class="nav-links" id="navLinks">
+                <a href="/" class="active">Home</a>
+                <a href="/monitor">Live Monitor</a>
+                <a href="/alerts">Alerts</a>
+                <a href="/analytics">Analytics</a>
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+            </div>
+
+            <a href="/monitor" class="nav-cta" id="nav-launch-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2" />
+                    <circle cx="12" cy="10" r="3" fill="currentColor" />
+                    <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                Launch Monitor
+            </a>
+
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
         </div>
-        <div class="nav-links">
-            <a href="/" class="active">Home</a>
-            <a href="/monitor">Live Monitor</a>
-            <a href="/alerts">Alerts</a>
-            <a href="/analytics">Analytics</a>
-        </div>
-        <a href="/monitor" class="nav-cta" id="nav-launch-btn">Launch Monitor</a>
     </nav>
 
+    <!-- ═══════════ HERO ═══════════ -->
     <section class="hero" id="hero-section">
         <canvas id="hero-canvas"></canvas>
         <div class="hero-content">
             <div class="hero-badge"><span class="pulse-dot"></span>AI-POWERED SAFETY SYSTEM</div>
             <h1 class="hero-title">
-                <span class="line">Construction Site</span>
-                <span class="line accent">Safety Monitoring</span>
+                <span class="line">Smart</span>
+                <span class="line accent">Construction Safety</span>
             </h1>
-            <p class="hero-sub">Real-time hazard detection using computer vision. Helmet compliance, fall prevention, danger zone monitoring — all in one intelligent platform.</p>
+            <p class="hero-sub">Real-time monitoring and intelligent analytics to ensure safer construction sites.
+                Helmet compliance, fall prevention, danger zone monitoring — all in one platform.</p>
             <div class="hero-actions">
                 <a href="/monitor" class="btn-primary" id="hero-launch-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                    Launch Monitor
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                        <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2" />
+                        <circle cx="12" cy="10" r="3" fill="currentColor" />
+                        <path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    Live Monitor
                 </a>
-                <a href="#features" class="btn-ghost" id="hero-learn-btn">Learn More ↓</a>
+                <a href="#features" class="btn-ghost" id="hero-learn-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="12" width="4" height="9" rx="1" fill="currentColor" />
+                        <rect x="10" y="7" width="4" height="14" rx="1" fill="currentColor" />
+                        <rect x="17" y="3" width="4" height="18" rx="1" fill="currentColor" />
+                    </svg>
+                    View Analytics
+                </a>
             </div>
             <div class="hero-stats">
                 <div class="stat"><span class="stat-val">6+</span><span class="stat-lbl">Detection Types</span></div>
@@ -50,92 +94,271 @@
         <div class="scroll-indicator"><span>Scroll to explore</span>↓</div>
     </section>
 
+    <!-- ═══════════ FEATURES ═══════════ -->
     <section class="features" id="features">
         <div class="section-header">
             <span class="section-tag">CAPABILITIES</span>
-            <h2 class="section-title">Intelligent Detection Modules</h2>
+            <h2 class="section-title">Intelligent <span class="accent">Detection</span> Modules</h2>
             <p class="section-sub">Six AI-powered modules working together for comprehensive site safety.</p>
         </div>
         <div class="features-grid">
-            <div class="feature-card" id="feature-helmet">
-                <div class="feature-icon red">⛑</div>
-                <h3>Helmet Detection</h3>
-                <p>YOLOv8-based PPE compliance checker detects workers without safety helmets in real-time.</p>
-                <span class="feature-tag red">CRITICAL</span>
+            <div class="feature-card reveal" id="feature-helmet">
+                <div class="fcard-bg red"></div>
+                <div class="fcard-overlay"></div>
+                <div class="fcard-body">
+                    <div class="fcard-icon icon-red">⛑</div>
+                    <h3 class="fcard-title">Helmet Detection</h3>
+                    <p class="fcard-desc">YOLOv8-based PPE compliance checker detects workers without safety helmets in
+                        real-time.</p>
+                    <span class="fcard-tag tag-red">CRITICAL</span>
+                </div>
+                <span class="fcard-arrow">→</span>
             </div>
-            <div class="feature-card" id="feature-vest">
-                <div class="feature-icon amber">🦺</div>
-                <h3>Vest Detection</h3>
-                <p>Identifies workers missing reflective safety jackets using overlap-based bounding box assignment.</p>
-                <span class="feature-tag amber">HIGH</span>
+            <div class="feature-card reveal" id="feature-vest">
+                <div class="fcard-bg amber"></div>
+                <div class="fcard-overlay"></div>
+                <div class="fcard-body">
+                    <div class="fcard-icon icon-amber">🦺</div>
+                    <h3 class="fcard-title">Vest Detection</h3>
+                    <p class="fcard-desc">Identifies workers missing reflective safety jackets using overlap-based
+                        bounding box assignment.</p>
+                    <span class="fcard-tag tag-amber">HIGH</span>
+                </div>
+                <span class="fcard-arrow">→</span>
             </div>
-            <div class="feature-card" id="feature-fall">
-                <div class="feature-icon cyan">🧍</div>
-                <h3>Fall Detection</h3>
-                <p>MediaPipe pose estimation detects horizontal body positions and confirms falls after sustained duration.</p>
-                <span class="feature-tag cyan">AI POSE</span>
+            <div class="feature-card reveal" id="feature-fall">
+                <div class="fcard-bg yellow"></div>
+                <div class="fcard-overlay"></div>
+                <div class="fcard-body">
+                    <div class="fcard-icon icon-yellow">🧍</div>
+                    <h3 class="fcard-title">Fall Detection</h3>
+                    <p class="fcard-desc">MediaPipe pose estimation detects horizontal body positions and confirms falls
+                        after sustained duration.</p>
+                    <span class="fcard-tag tag-yellow">AI POSE</span>
+                </div>
+                <span class="fcard-arrow">→</span>
             </div>
-            <div class="feature-card" id="feature-edge">
-                <div class="feature-icon purple">⚠</div>
-                <h3>Edge / Height Danger</h3>
-                <p>Detects workers near elevation edges and height danger zones using spatial position analysis.</p>
-                <span class="feature-tag purple">ZONE</span>
+            <div class="feature-card reveal" id="feature-edge">
+                <div class="fcard-bg purple"></div>
+                <div class="fcard-overlay"></div>
+                <div class="fcard-body">
+                    <div class="fcard-icon icon-purple">⚠</div>
+                    <h3 class="fcard-title">Edge / Height Danger</h3>
+                    <p class="fcard-desc">Detects workers near elevation edges and height danger zones using spatial
+                        position analysis.</p>
+                    <span class="fcard-tag tag-purple">ZONE</span>
+                </div>
+                <span class="fcard-arrow">→</span>
             </div>
-            <div class="feature-card" id="feature-falling-obj">
-                <div class="feature-icon green">📦</div>
-                <h3>Falling Objects</h3>
-                <p>Optical flow analysis detects fast-moving objects above workers that could cause injury.</p>
-                <span class="feature-tag green">OPTICAL</span>
+            <div class="feature-card reveal" id="feature-falling-obj">
+                <div class="fcard-bg green"></div>
+                <div class="fcard-overlay"></div>
+                <div class="fcard-body">
+                    <div class="fcard-icon icon-green">📦</div>
+                    <h3 class="fcard-title">Falling Objects</h3>
+                    <p class="fcard-desc">Optical flow analysis detects fast-moving objects above workers that could
+                        cause injury.</p>
+                    <span class="fcard-tag tag-green">OPTICAL</span>
+                </div>
+                <span class="fcard-arrow">→</span>
             </div>
-            <div class="feature-card" id="feature-motionless">
-                <div class="feature-icon red">🚨</div>
-                <h3>Motionless Detection</h3>
-                <p>Flags workers who remain motionless for extended periods, indicating potential unconsciousness.</p>
-                <span class="feature-tag red">EMERGENCY</span>
+            <div class="feature-card reveal" id="feature-motionless">
+                <div class="fcard-bg red"></div>
+                <div class="fcard-overlay"></div>
+                <div class="fcard-body">
+                    <div class="fcard-icon icon-red">🚨</div>
+                    <h3 class="fcard-title">Motionless Detection</h3>
+                    <p class="fcard-desc">Flags workers who remain motionless for extended periods, indicating potential
+                        unconsciousness.</p>
+                    <span class="fcard-tag tag-red">EMERGENCY</span>
+                </div>
+                <span class="fcard-arrow">→</span>
             </div>
         </div>
     </section>
 
+    <!-- ═══════════ HOW IT WORKS ═══════════ -->
     <section class="how-it-works" id="how-it-works">
         <div class="section-header">
             <span class="section-tag">PIPELINE</span>
-            <h2 class="section-title">How It Works</h2>
+            <h2 class="section-title">How It <span class="accent">Works</span></h2>
             <p class="section-sub">From video input to real-time safety intelligence in milliseconds.</p>
         </div>
         <div class="pipeline">
-            <div class="pipeline-step"><div class="step-number">01</div><div class="step-content"><h3>Video Input</h3><p>Upload footage or connect a live webcam feed.</p></div></div>
+            <div class="pipeline-step reveal">
+                <div class="step-number">01</div>
+                <div class="step-content">
+                    <h3>Video Input</h3>
+                    <p>Upload footage or connect a live webcam feed to the system.</p>
+                </div>
+            </div>
             <div class="pipeline-connector"></div>
-            <div class="pipeline-step"><div class="step-number">02</div><div class="step-content"><h3>AI Processing</h3><p>YOLO + MediaPipe + Optical Flow analyze every frame.</p></div></div>
+            <div class="pipeline-step reveal">
+                <div class="step-number">02</div>
+                <div class="step-content">
+                    <h3>AI Processing</h3>
+                    <p>YOLO + MediaPipe + Optical Flow analyze every frame in real-time.</p>
+                </div>
+            </div>
             <div class="pipeline-connector"></div>
-            <div class="pipeline-step"><div class="step-number">03</div><div class="step-content"><h3>Detection & Alerts</h3><p>Violations flagged, scored, and streamed instantly.</p></div></div>
+            <div class="pipeline-step reveal">
+                <div class="step-number">03</div>
+                <div class="step-content">
+                    <h3>Detection & Alerts</h3>
+                    <p>Violations flagged, scored by risk level, and streamed instantly.</p>
+                </div>
+            </div>
             <div class="pipeline-connector"></div>
-            <div class="pipeline-step"><div class="step-number">04</div><div class="step-content"><h3>Record & Analyze</h3><p>All violations stored in MongoDB for review and analytics.</p></div></div>
+            <div class="pipeline-step reveal">
+                <div class="step-number">04</div>
+                <div class="step-content">
+                    <h3>Record & Analyze</h3>
+                    <p>All violations stored in MongoDB for historical review and analytics.</p>
+                </div>
+            </div>
         </div>
     </section>
 
+    <!-- ═══════════ STATS ═══════════ -->
+    <section class="stats-section">
+        <div class="stats-box">
+            <div class="stat-cell reveal">
+                <div class="stat-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="#f2c200">
+                        <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7l-9-5z" />
+                        <path d="M9 12l2 2 4-4" stroke="#0a0a0a" stroke-width="2.2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-num"><span data-count="98">0</span>%</div>
+                    <div class="stat-name">Detection Accuracy</div>
+                    <div class="stat-hint">High AI prediction rate</div>
+                </div>
+            </div>
+            <div class="stat-cell reveal">
+                <div class="stat-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                        <rect x="2" y="3" width="20" height="14" rx="2" stroke="#f2c200" stroke-width="2" />
+                        <circle cx="12" cy="10" r="3" fill="#f2c200" />
+                    </svg>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-num">24/7</div>
+                    <div class="stat-name">Monitoring</div>
+                    <div class="stat-hint">Round-the-clock surveillance</div>
+                </div>
+            </div>
+            <div class="stat-cell reveal">
+                <div class="stat-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                        <circle cx="9" cy="7" r="3" fill="#f2c200" />
+                        <circle cx="15" cy="7" r="3" fill="#f2c200" opacity="0.6" />
+                        <path d="M3 20c0-4 2.7-7 6-7h6c3.3 0 6 3 6 7" stroke="#f2c200" stroke-width="2"
+                            stroke-linecap="round" />
+                    </svg>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-num"><span data-count="150">0</span>+</div>
+                    <div class="stat-name">Workers Protected</div>
+                    <div class="stat-hint">Across all monitored sites</div>
+                </div>
+            </div>
+            <div class="stat-cell reveal">
+                <div class="stat-icon-wrap">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                        <polygon points="5 3 19 12 5 21 5 3" fill="#f2c200" />
+                    </svg>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-num">30+</div>
+                    <div class="stat-name">FPS Processing</div>
+                    <div class="stat-hint">Real-time frame analysis</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ CTA ═══════════ -->
     <section class="cta" id="cta-section">
         <div class="cta-glow"></div>
         <div class="cta-content">
-            <h2>Ready to Monitor?</h2>
+            <h2>Ready to <span class="accent" style="color:var(--yellow)">Monitor</span>?</h2>
             <p>Start protecting your workforce with AI-powered safety detection.</p>
             <a href="/monitor" class="btn-primary large" id="cta-launch-btn">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
                 Launch Live Monitor
             </a>
         </div>
     </section>
 
+    <!-- ═══════════ FOOTER ═══════════ -->
     <footer class="footer" id="main-footer">
-        <div class="footer-content">
+        <div class="footer-inner">
             <div class="footer-brand">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                <span>SafeSite AI</span>
+                <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
+                    <path d="M4 20 Q14 6 24 20" stroke="#f2c200" stroke-width="2.5" fill="none"
+                        stroke-linecap="round" />
+                    <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#f2c200" />
+                    <circle cx="14" cy="11" r="3" fill="#f2c200" />
+                </svg>
+                <span class="footer-brand-name">SafeSite AI</span>
             </div>
-            <span class="footer-copy">AI-Based Smart Construction Site Safety Monitoring System</span>
+            <span class="footer-copy">© 2026 Smart Construction Safety System. All rights reserved.</span>
+            <div class="footer-socials">
+                <a href="#" class="soc-btn" aria-label="Facebook"><svg width="15" height="15" viewBox="0 0 24 24"
+                        fill="currentColor">
+                        <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
+                    </svg></a>
+                <a href="#" class="soc-btn" aria-label="Twitter"><svg width="15" height="15" viewBox="0 0 24 24"
+                        fill="currentColor">
+                        <path
+                            d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
+                    </svg></a>
+                <a href="#" class="soc-btn" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24"
+                        fill="currentColor">
+                        <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
+                        <circle cx="4" cy="4" r="2" />
+                    </svg></a>
+            </div>
         </div>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="/static/js/scene.js"></script>
+    <script src="/static/js/scene.js?v={{ v }}"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 30);
+        });
+        // Hamburger toggle
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('open');
+                navLinks.classList.toggle('open');
+            });
+        }
+        // Reveal on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        // Animate counters
+        document.querySelectorAll('[data-count]').forEach(el => {
+            const target = parseInt(el.getAttribute('data-count'));
+            let current = 0;
+            const step = Math.ceil(target / 40);
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) { current = target; clearInterval(timer); }
+                el.textContent = current;
+            }, 30);
+        });
+    </script>
 </body>
+
 </html>

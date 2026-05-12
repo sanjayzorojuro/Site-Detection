@@ -76,7 +76,7 @@ def insert_violation(video_name, violation_type, risk_level, person_id=None,
         "bbox": bbox,
         "details": details,
         "frame_number": frame_number,
-        "timestamp": datetime.now(timezone.utc),
+        "timestamp": datetime.now(),
     }
     if db is not None:
         result = db.violations.insert_one(doc)
@@ -150,7 +150,7 @@ def insert_processed_video(video_name, total_frames, total_violations, risk_leve
     db = get_db()
     doc = {
         "video_name": video_name,
-        "date_processed": datetime.now(timezone.utc),
+        "date_processed": datetime.now(),
         "total_frames": total_frames,
         "total_violations": total_violations,
         "risk_level": risk_level,
@@ -236,6 +236,21 @@ def get_analytics_summary(video_name=None):
             "by_risk": by_risk,
             "processed_videos": len(_fallback_videos),
         }
+
+
+# ─── Clear All Data (called on server startup) ───────────────────────────────
+
+def clear_all_data():
+    """Wipe all violations and processed video records from the database."""
+    db = get_db()
+    if db is not None:
+        db.violations.delete_many({})
+        db.processed_videos.delete_many({})
+        logger.info("Cleared all violations and processed video records from MongoDB.")
+    else:
+        _fallback_violations.clear()
+        _fallback_videos.clear()
+        logger.info("Cleared all in-memory data.")
 
 
 # ─── In-memory fallback (used when MongoDB is unavailable) ────────────────────
