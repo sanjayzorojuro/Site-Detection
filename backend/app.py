@@ -116,14 +116,12 @@ def get_detector():
     return detector
 
 
-# ─── Startup Event: Clear old data ────────────────────────────────────────────
+# ─── Startup Event ────────────────────────────────────────────────────────────
 
 @app.on_event("startup")
 async def on_startup():
-    """Clear all stored violations and analytics on every server start."""
-    logger.info("Server starting — clearing previous session data...")
-    clear_all_data()
-    logger.info("Previous session data cleared.")
+    """Log server start — data persists across restarts in MongoDB."""
+    logger.info("Server starting — previous session data preserved in database.")
 
 
 # ─── Page Routes ──────────────────────────────────────────────────────────────
@@ -189,6 +187,18 @@ def _process_video(video_path: str, video_name: str):
 
         # Track which violations have been reported to avoid duplicates
         last_violations_per_person = {}
+        # Cooldown: (person_id, violation_category) → last_insert_time
+        # Prevents inserting the same violation type for the same person within 30s
+        violation_cooldowns = {}
+        VIOLATION_COOLDOWN_SECS = 30
+
+        def _normalize_danger(d):
+            """Strip time-varying parts so dedup works for fall/motionless alerts.
+            e.g. 'Possible Fall (2.3s)' → 'Possible Fall'
+                 'FALL DETECTED (5.1s)' → 'FALL DETECTED'
+            """
+            import re
+            return re.sub(r'\s*\([\d.]+s\)\s*$', '', d)
 
         logger.info(f"Processing video: {video_name} ({state.total_frames} frames at {video_fps} fps)")
 
@@ -221,15 +231,25 @@ def _process_video(video_path: str, video_name: str):
             for det_item in detections:
                 if det_item["dangers"]:
                     pid = det_item["person_id"]
-                    current_dangers = tuple(sorted(det_item["dangers"]))
+                    # Normalize dangers for comparison (strip time values)
+                    current_dangers = tuple(sorted(_normalize_danger(d) for d in det_item["dangers"]))
                     prev_dangers = last_violations_per_person.get(pid)
 
                     if current_dangers != prev_dangers:
                         last_violations_per_person[pid] = current_dangers
+                        now = time.time()
                         for danger in det_item["dangers"]:
+                            # Check cooldown — skip if same violation type for same person within 30s
+                            category = _normalize_danger(danger)
+                            cooldown_key = (pid, category)
+                            last_time = violation_cooldowns.get(cooldown_key, 0)
+                            if now - last_time < VIOLATION_COOLDOWN_SECS:
+                                continue  # skip — already recorded recently
+                            violation_cooldowns[cooldown_key] = now
+
                             alert = {
                                 "id": str(uuid.uuid4()),
-                                "type": danger,
+                                "type": category,  # use normalized name
                                 "risk_level": det_item["risk_level"],
                                 "person_id": pid,
                                 "timestamp": datetime.now().isoformat(),
@@ -245,7 +265,7 @@ def _process_video(video_path: str, video_name: str):
                             try:
                                 insert_violation(
                                     video_name=video_name,
-                                    violation_type=danger,
+                                    violation_type=category,
                                     risk_level=det_item["risk_level"],
                                     person_id=pid,
                                     bbox=det_item["bbox"],
@@ -621,7 +641,7 @@ async def list_test_videos():
 #   3. Create an App Password and paste it below / in env var
 
 CONTACT_EMAIL      = os.getenv("CONTACT_EMAIL", "sanjayraops17@gmail.com")
-CONTACT_EMAIL_PASS = os.getenv("CONTACT_EMAIL_PASS", "96637761407483050218")
+CONTACT_EMAIL_PASS = os.getenv("CONTACT_EMAIL_PASS", "hnfm xglv quah qdic")
 CONTACT_RECIPIENT  = os.getenv("CONTACT_RECIPIENT", CONTACT_EMAIL)
 
 

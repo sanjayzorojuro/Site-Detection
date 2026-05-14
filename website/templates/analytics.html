@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,14 @@
     <meta name="description" content="Safety analytics dashboard with risk analysis and violation statistics.">
     <link rel="stylesheet" href="/static/css/analytics.css?v={{ v }}">
 </head>
+
 <body>
     <nav class="nav">
         <a href="/" class="nav-brand">
             <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-                <path d="M4 20 Q14 6 24 20" stroke="#f2c200" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#f2c200"/>
-                <circle cx="14" cy="11" r="3" fill="#f2c200"/>
+                <path d="M4 20 Q14 6 24 20" stroke="#f2c200" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#f2c200" />
+                <circle cx="14" cy="11" r="3" fill="#f2c200" />
             </svg>
             <span>SafeSite AI</span>
         </a>
@@ -74,10 +76,14 @@
                 <div class="donut-chart" id="risk-chart">
                     <div class="donut-ring" id="donut-ring">
                         <svg viewBox="0 0 36 36" class="donut-svg">
-                            <circle class="donut-bg" cx="18" cy="18" r="15.9" fill="none" stroke="#1a1a1a" stroke-width="3"/>
-                            <circle class="donut-segment" id="seg-danger" cx="18" cy="18" r="15.9" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"/>
-                            <circle class="donut-segment" id="seg-warning" cx="18" cy="18" r="15.9" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"/>
-                            <circle class="donut-segment" id="seg-safe" cx="18" cy="18" r="15.9" fill="none" stroke="#22c55e" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25"/>
+                            <circle class="donut-bg" cx="18" cy="18" r="15.9" fill="none" stroke="#1a1a1a"
+                                stroke-width="3" />
+                            <circle class="donut-segment" id="seg-danger" cx="18" cy="18" r="15.9" fill="none"
+                                stroke="#ef4444" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25" />
+                            <circle class="donut-segment" id="seg-warning" cx="18" cy="18" r="15.9" fill="none"
+                                stroke="#f59e0b" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25" />
+                            <circle class="donut-segment" id="seg-safe" cx="18" cy="18" r="15.9" fill="none"
+                                stroke="#22c55e" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25" />
                         </svg>
                     </div>
                     <div class="donut-legend" id="donut-legend"></div>
@@ -86,7 +92,7 @@
         </div>
 
         <div class="videos-panel">
-            <h3>📹 Processed Videos</h3>
+            <h3>📹 Processed Sites</h3>
             <table class="videos-table" id="videos-table">
                 <thead>
                     <tr>
@@ -99,7 +105,9 @@
                     </tr>
                 </thead>
                 <tbody id="videos-body">
-                    <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted)">Loading...</td></tr>
+                    <tr>
+                        <td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted)">Loading...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -107,4 +115,5 @@
 
     <script src="/static/js/analytics.js?v={{ v }}"></script>
 </body>
+
 </html>

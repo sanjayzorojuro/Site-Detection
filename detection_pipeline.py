@@ -48,8 +48,8 @@ PPE_CONF_THRESHOLD     = 0.35    # PPE detection confidence
 MIN_PERSON_AREA        = 1500    # minimum person bbox area in pixels (filters tiny misdetections)
 
 # Fall detection constants
-FALL_CONFIRM_SECS      = 1.5
-MOTIONLESS_SECS        = 5.0
+FALL_CONFIRM_SECS      = 3.0     # must hold fall pose for 3s to confirm
+MOTIONLESS_SECS        = 10.0    # person must be still for 10s before alert
 EDGE_MARGIN            = 0.12
 MOVEMENT_THRESHOLD     = 18
 
@@ -160,13 +160,12 @@ def _get_lm(landmarks, index, vis=0.4):
 def _is_fall_position(landmarks):
     """
     Check if pose landmarks indicate a fall position.
-    Logic from fall_detection_V1_.py, adapted for new MediaPipe Tasks API.
-
-    Conditions for fall:
-      1. All key landmarks (nose, shoulders, hips) must be visible
-      2. Torso must be nearly flat (shoulder_y ≈ hip_y)
-      3. Hips must be low in frame (hip_y > 0.6)
-      4. Body must be roughly horizontal (nose_y ≈ feet_y)
+    Strict conditions to avoid false positives:
+      1. All key landmarks (nose, shoulders, hips, BOTH ankles) must be visible
+      2. Torso must be nearly flat (shoulder_y ≈ hip_y, diff < 0.07)
+      3. Hips must be very low in frame (hip_y > 0.65)
+      4. Body must be clearly horizontal (nose_y ≈ feet_y, diff < 0.2)
+      5. Person bounding box must be wider than tall (lying down aspect ratio)
     """
     nose = _get_lm(landmarks, PoseLandmark.NOSE)
     ls = _get_lm(landmarks, PoseLandmark.LEFT_SHOULDER)
@@ -176,21 +175,32 @@ def _is_fall_position(landmarks):
     la = _get_lm(landmarks, PoseLandmark.LEFT_ANKLE)
     ra = _get_lm(landmarks, PoseLandmark.RIGHT_ANKLE)
 
-    if not all([nose, ls, rs, lh, rh]):
+    # Require ALL key landmarks including both ankles
+    if not all([nose, ls, rs, lh, rh, la, ra]):
         return False
 
     shoulder_y = (ls.y + rs.y) / 2
     hip_y = (lh.y + rh.y) / 2
-    torso_flat = abs(shoulder_y - hip_y) < 0.1
-    hip_low = hip_y > 0.6
+    feet_y = (la.y + ra.y) / 2
 
-    if la and ra:
-        feet_y = (la.y + ra.y) / 2
-        body_horiz = abs(nose.y - feet_y) < 0.35
-    else:
-        body_horiz = False
+    # Torso must be nearly flat (shoulders ≈ hips vertically)
+    torso_flat = abs(shoulder_y - hip_y) < 0.07
 
-    return body_horiz and torso_flat and hip_low
+    # Hips must be low in the frame
+    hip_low = hip_y > 0.65
+
+    # Body must be clearly horizontal (head ≈ feet height)
+    body_horiz = abs(nose.y - feet_y) < 0.2
+
+    # Aspect ratio check: the x-spread of the body should be wider than y-spread
+    # A standing person is tall and narrow; a fallen person is wide and short
+    all_x = [nose.x, ls.x, rs.x, lh.x, rh.x, la.x, ra.x]
+    all_y = [nose.y, ls.y, rs.y, lh.y, rh.y, la.y, ra.y]
+    x_spread = max(all_x) - min(all_x)
+    y_spread = max(all_y) - min(all_y)
+    is_wide = x_spread > y_spread * 0.8  # body wider than 80% of height = likely lying
+
+    return body_horiz and torso_flat and hip_low and is_wide
 
 
 # ─── Pose Skeleton Drawing ────────────────────────────────────────────────────
