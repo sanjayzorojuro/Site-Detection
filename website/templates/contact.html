@@ -131,20 +131,44 @@
     </footer>
 
     <script>
-    // Simple form handler
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
+    // Contact form — sends to backend API
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const btn = document.getElementById('sendBtn');
+        const formSuccess = document.getElementById('formSuccess');
         btn.disabled = true;
-        btn.querySelector('.btn-text').style.display = 'none';
         btn.innerHTML = '<span style="display:flex;align-items:center;gap:8px"><svg class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Sending...</span>';
-        setTimeout(() => {
+
+        const data = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            subject: document.getElementById('subject').value,
+            message: document.getElementById('message').value
+        };
+
+        try {
+            const resp = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await resp.json();
+
             btn.innerHTML = '<span class="btn-text"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send Message</span>';
             btn.disabled = false;
-            document.getElementById('formSuccess').style.display = 'flex';
-            document.getElementById('contactForm').reset();
-            setTimeout(() => { document.getElementById('formSuccess').style.display = 'none'; }, 5000);
-        }, 1500);
+
+            if (resp.ok) {
+                formSuccess.style.display = 'flex';
+                document.getElementById('contactForm').reset();
+                setTimeout(() => { formSuccess.style.display = 'none'; }, 5000);
+            } else {
+                alert(result.error || 'Failed to send message. Please try again.');
+            }
+        } catch (err) {
+            btn.innerHTML = '<span class="btn-text"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send Message</span>';
+            btn.disabled = false;
+            alert('Network error. Please try again.');
+        }
     });
     </script>
 </body>

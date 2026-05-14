@@ -1,14 +1,20 @@
 """
 Unified Construction Site Safety Detection Pipeline
 ====================================================
-Uses a SINGLE trained model (helmet_model_V2.pt) for:
-  - Person detection (class 4)
-  - Helmet detection (class 3)
-  - Vest/Jacket detection (class 5)
-  - Boots (class 0), Gloves (class 1), Goggles (class 2)
+Triple-model approach:
+  1. yolov8n.pt (COCO)        → Person detection (class 0)
+  2. helmet_model_V1.pt       → Safety-Helmet & Reflective-Jacket detection
+  3. machine_model.pt         → Heavy machine/vehicle detection (17 classes)
 
 Plus MediaPipe PoseLandmarker for fall/pose detection,
 and optical flow for falling object detection.
+
+Detection targets:
+  - Person       (COCO class 0)
+  - Helmet       (helmet_model_V1 class name: 'Safety-Helmet')
+  - Safety Vest  (helmet_model_V1 class name: 'Reflective-Jacket')
+  - Fall         (MediaPipe pose estimation)
+  - Machine proximity danger (person near heavy equipment)
 
 Usage:
     detector = SafetyDetector()
@@ -33,8 +39,8 @@ logger = logging.getLogger("safety_detector")
 BASE_DIR = Path(__file__).parent.resolve()
 
 # ─── Detection Constants ──────────────────────────────────────────────────────
-PROCESS_EVERY_N_FRAMES = 3       # run AI every 3 frames for real-time speed
-RESIZE_FOR_AI          = 640
+PROCESS_EVERY_N_FRAMES = 4       # run AI every 4 frames (3 models need headroom)
+RESIZE_FOR_AI          = 480     # smaller input = faster inference with 3 models
 
 # Person detection filters
 PERSON_CONF_THRESHOLD  = 0.45    # higher confidence to avoid false positives
@@ -54,6 +60,10 @@ FALLING_OBJ_SPEED      = 25
 # Gear bbox must overlap person bbox by at least 40% of the gear's own area
 GEAR_OVERLAP_THRESH    = 0.4
 
+# Machine / heavy equipment proximity detection
+MACHINE_CONF_THRESHOLD = 0.40    # confidence for machine detections
+MACHINE_PROXIMITY_PX   = 120     # pixels — person within this range = danger
+
 # Risk weights for scoring
 RISK_WEIGHTS = {
     "no_helmet": 30,
@@ -63,15 +73,11 @@ RISK_WEIGHTS = {
     "edge_danger": 40,
     "falling_object": 45,
     "motionless": 35,
+    "machine_proximity": 45,
 }
 
-# helmet_model_V2 class IDs
-CLS_BOOTS   = 4
-CLS_GLOVES  = 1
-CLS_GOGGLES = 5
-CLS_HELMET  = 0
-CLS_PERSON  = 2
-CLS_VEST    = 3
+# COCO class ID for person detection (yolov8n.pt)
+COCO_PERSON_CLS = 0
 
 
 # ─── Per-Person Tracker (from Detection/fall_detection_V1_.py) ────────────────
@@ -222,6 +228,26 @@ def _draw_pose_landmarks(frame, landmarks, h, w):
         cv2.circle(frame, pt, 3, (0, 255, 255), -1)
 
 
+# ─── Machine Proximity Helper ─────────────────────────────────────────────────
+
+def _is_near_machine(person_box, machine_box, proximity_px=MACHINE_PROXIMITY_PX):
+    """
+    Check if a person bounding box is within proximity_px pixels of a machine
+    bounding box.  Returns True if boxes overlap OR the gap between them is
+    less than proximity_px.
+    """
+    px1, py1, px2, py2 = person_box
+    mx1, my1, mx2, my2 = machine_box[:4]  # first 4 elements are coords
+
+    # Compute gap on each axis (0 if overlapping)
+    gap_x = max(0, max(mx1 - px2, px1 - mx2))
+    gap_y = max(0, max(my1 - py2, py1 - my2))
+
+    # Euclidean gap between the two boxes
+    gap = (gap_x ** 2 + gap_y ** 2) ** 0.5
+    return gap < proximity_px
+
+
 # ─── Other Detection Helpers ──────────────────────────────────────────────────
 
 def _is_near_edge(box, frame_h, frame_w):
@@ -279,21 +305,39 @@ class SafetyDetector:
     """
     Unified safety detection pipeline.
 
-    Uses helmet_model_V2.pt (single model) for:
-      - Person detection  (class 4, conf >= 0.45)
-      - Helmet detection  (class 3, conf >= 0.35)
-      - Vest detection    (class 5, conf >= 0.35)
+    Triple-model approach:
+      - yolov8n.pt (COCO)        → Person detection (class 0, conf >= 0.45)
+      - helmet_model_V1.pt       → Helmet & Vest detection (conf >= 0.30)
+      - machine_model.pt         → Heavy machine detection (conf >= 0.40)
 
     Plus MediaPipe PoseLandmarker for fall detection,
     and optical flow for falling object alerts.
     """
 
-    def __init__(self, model_path=None):
-        if model_path is None:
-            model_path = str(BASE_DIR / "models" / "helmet_model_V2.pt")
+    def __init__(self, person_model_path=None, ppe_model_path=None,
+                 machine_model_path=None):
+        # Model 1: COCO person detector
+        if person_model_path is None:
+            person_model_path = str(BASE_DIR / "models" / "yolov8n.pt")
+        logger.info(f"Loading person model: {person_model_path}")
+        self.person_model = YOLO(person_model_path)
 
-        logger.info(f"Loading safety model: {model_path}")
-        self.model = YOLO(model_path)
+        # Model 2: PPE detector (helmet + vest)
+        if ppe_model_path is None:
+            ppe_model_path = str(BASE_DIR / "models" / "helmet_model_V1.pt")
+        logger.info(f"Loading PPE model: {ppe_model_path}")
+        self.ppe_model = YOLO(ppe_model_path)
+
+        # Model 3: Heavy machine / vehicle detector
+        if machine_model_path is None:
+            machine_model_path = str(BASE_DIR / "models" / "machine_model.pt")
+        logger.info(f"Loading machine model: {machine_model_path}")
+        self.machine_model = YOLO(machine_model_path)
+
+        # Log the class names so we can verify they match
+        logger.info(f"Person model classes: {self.person_model.names}")
+        logger.info(f"PPE model classes: {self.ppe_model.names}")
+        logger.info(f"Machine model classes: {self.machine_model.names}")
 
         # MediaPipe Pose — new Tasks API
         pose_model_path = str(BASE_DIR / "models" / "pose_landmarker_lite.task")
@@ -312,6 +356,7 @@ class SafetyDetector:
         self._last_pose_landmarks = None
         self._last_helmets = []
         self._last_vests = []
+        self._last_machines = []   # list of (x1,y1,x2,y2, class_name)
 
         logger.info("SafetyDetector initialized successfully")
 
@@ -342,6 +387,7 @@ class SafetyDetector:
         self._last_pose_landmarks = None
         self._last_helmets = []
         self._last_vests = []
+        self._last_machines = []
         # Must re-create PoseLandmarker to reset internal timestamp state
         try:
             self._init_pose_landmarker()
@@ -363,36 +409,57 @@ class SafetyDetector:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         if self.frame_count % PROCESS_EVERY_N_FRAMES == 0:
-            # ── Single YOLO inference for ALL classes ──────────────────────
-            results = self.model(frame, conf=PPE_CONF_THRESHOLD, verbose=False,
-                                imgsz=RESIZE_FOR_AI)
+            # ── Model 1: COCO person detection ───────────────────────────
+            person_results = self.person_model(
+                frame, conf=PERSON_CONF_THRESHOLD, verbose=False,
+                imgsz=RESIZE_FOR_AI
+            )
 
             person_boxes = []
-            helmets = []
-            vests = []
-
-            for box in results[0].boxes:
+            for box in person_results[0].boxes:
                 cls_id = int(box.cls[0])
-                conf = float(box.conf[0])
-                x1, y1, x2, y2 = map(int, box.xyxy[0])
-
-                if cls_id == CLS_PERSON:
-                    # Apply stricter confidence for person detection
-                    if conf < PERSON_CONF_THRESHOLD:
-                        continue
-                    # Filter out tiny misdetections (must be a real person-sized box)
+                if cls_id == COCO_PERSON_CLS:
+                    x1, y1, x2, y2 = map(int, box.xyxy[0])
+                    # Filter out tiny misdetections
                     box_area = (x2 - x1) * (y2 - y1)
                     if box_area < MIN_PERSON_AREA:
                         continue
                     person_boxes.append((x1, y1, x2, y2))
-                elif cls_id == CLS_HELMET:
+
+            # ── Model 2: PPE detection (helmet + vest) ─────────────────
+            ppe_results = self.ppe_model(
+                frame, conf=PPE_CONF_THRESHOLD, verbose=False,
+                imgsz=RESIZE_FOR_AI
+            )
+
+            helmets = []
+            vests = []
+            for box in ppe_results[0].boxes:
+                cls_id = int(box.cls[0])
+                name = ppe_results[0].names[cls_id].lower()
+                x1, y1, x2, y2 = map(int, box.xyxy[0])
+                if "helmet" in name:
                     helmets.append((x1, y1, x2, y2))
-                elif cls_id == CLS_VEST:
+                elif "jacket" in name or "vest" in name:
                     vests.append((x1, y1, x2, y2))
+
+            # ── Model 3: Heavy machine / vehicle detection ─────────────
+            machine_results = self.machine_model(
+                frame, conf=MACHINE_CONF_THRESHOLD, verbose=False,
+                imgsz=RESIZE_FOR_AI
+            )
+
+            machines = []
+            for box in machine_results[0].boxes:
+                cls_id = int(box.cls[0])
+                cls_name = machine_results[0].names[cls_id]
+                x1, y1, x2, y2 = map(int, box.xyxy[0])
+                machines.append((x1, y1, x2, y2, cls_name))
 
             self._last_person_boxes = person_boxes
             self._last_helmets = helmets
             self._last_vests = vests
+            self._last_machines = machines
 
             # ── MediaPipe Pose for fall detection ─────────────────────────
             try:
@@ -427,6 +494,7 @@ class SafetyDetector:
             falling_obj_alerts = self._last_falling_obj_alerts
             helmets = self._last_helmets
             vests = self._last_vests
+            machines = self._last_machines
 
         # ── Draw skeleton if pose landmarks detected ──────────────────────
         if self._last_pose_landmarks:
@@ -482,6 +550,17 @@ class SafetyDetector:
                 dangers.append("MOTIONLESS - CHECK PERSON")
                 highest_color = (0, 0, 255)
 
+            # 6. Machine proximity danger
+            near_machine = False
+            nearby_machine_name = ""
+            for mch in machines:
+                if _is_near_machine(pbox, mch):
+                    near_machine = True
+                    nearby_machine_name = mch[4]  # class name
+                    dangers.append(f"PERSON IN DANGER - NEAR {nearby_machine_name.upper()}")
+                    highest_color = (0, 0, 255)
+                    break  # one machine alert per person is enough
+
             # Determine risk level
             if highest_color == (0, 0, 255):
                 risk_level = "danger"
@@ -522,6 +601,8 @@ class SafetyDetector:
                 "edge_danger": edge_danger,
                 "falling_object": is_falling_obj,
                 "motionless": motionless,
+                "near_machine": near_machine,
+                "machine_name": nearby_machine_name,
                 "dangers": dangers,
                 "risk_level": risk_level,
             })
@@ -535,6 +616,19 @@ class SafetyDetector:
             cv2.rectangle(annotated_frame, (vx1, vy1), (vx2, vy2), (0, 255, 255), 1)
             cv2.putText(annotated_frame, "Vest", (vx1, vy1 - 5),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 255), 1)
+
+        # Draw detected machine boxes (orange outlines)
+        for mch in machines:
+            mx1, my1, mx2, my2, mname = mch
+            cv2.rectangle(annotated_frame, (mx1, my1), (mx2, my2), (0, 140, 255), 2)
+            label = mname
+            lbl_sz, _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 2)
+            cv2.rectangle(annotated_frame,
+                          (mx1, my1 - lbl_sz[1] - 8),
+                          (mx1 + lbl_sz[0] + 6, my1),
+                          (0, 140, 255), cv2.FILLED)
+            cv2.putText(annotated_frame, label, (mx1 + 3, my1 - 5),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 255, 255), 2)
 
         # Edge danger zone line
         danger_zone_y = int(height * EDGE_MARGIN)
@@ -583,6 +677,8 @@ class SafetyDetector:
                 total_weight += RISK_WEIGHTS["falling_object"]
             if det["motionless"]:
                 total_weight += RISK_WEIGHTS["motionless"]
+            if det.get("near_machine"):
+                total_weight += RISK_WEIGHTS["machine_proximity"]
         if max_possible == 0:
             return 0.0
         return min(100.0, (total_weight / max_possible) * 100)
@@ -594,7 +690,8 @@ class SafetyDetector:
         if total == 0:
             return {"worker_count": 0, "helmet_compliance": 100.0,
                     "vest_compliance": 100.0, "danger_count": 0,
-                    "warning_count": 0, "safe_count": 0}
+                    "warning_count": 0, "safe_count": 0,
+                    "machine_danger_count": 0}
         helmets = sum(1 for d in detections if d["has_helmet"])
         vests = sum(1 for d in detections if d["has_vest"])
         return {
@@ -604,4 +701,5 @@ class SafetyDetector:
             "danger_count": sum(1 for d in detections if d["risk_level"] == "danger"),
             "warning_count": sum(1 for d in detections if d["risk_level"] == "warning"),
             "safe_count": sum(1 for d in detections if d["risk_level"] == "safe"),
+            "machine_danger_count": sum(1 for d in detections if d.get("near_machine")),
         }

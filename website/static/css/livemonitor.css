@@ -64,7 +64,7 @@ body {
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
 /* ═══ Layout ═══ */
-.layout { padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: calc(100vh - 60px); }
+.layout { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 
 /* ═══ Input Section ═══ */
 .input-section {
@@ -106,17 +106,23 @@ body {
 }
 
 /* ═══ Detection Section ═══ */
-.detection-section { display: flex; gap: 12px; flex: 1; min-height: 420px; }
+.detection-section { display: flex; gap: 12px; height: 480px; max-height: 480px; flex-shrink: 0; }
 .video-panel {
     flex: 1; background: var(--bg-card); border: 1px solid var(--border);
     border-radius: 14px; position: relative; overflow: hidden;
     display: flex; align-items: center; justify-content: center;
+    min-width: 0;
 }
 .video-placeholder { text-align: center; color: var(--text-muted); }
 .placeholder-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
 .video-placeholder p { font-size: 0.9rem; margin-bottom: 6px; color: var(--text-secondary); font-weight: 600; }
 .placeholder-hint { font-size: 0.72rem; }
-#video-feed { width: 100%; height: 100%; object-fit: contain; display: block; }
+#video-feed {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+    position: absolute; top: 0; left: 0;
+}
 .video-overlay {
     position: absolute; top: 12px; left: 12px;
     display: flex; gap: 8px; z-index: 10;

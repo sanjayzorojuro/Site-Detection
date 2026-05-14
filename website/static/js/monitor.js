@@ -32,6 +32,7 @@
     const statDanger = document.getElementById('stat-danger');
     const statWarning = document.getElementById('stat-warning');
     const statSafe = document.getElementById('stat-safe');
+    const statMachine = document.getElementById('stat-machine');
     const statFrame = document.getElementById('stat-frame');
     const statElapsed = document.getElementById('stat-elapsed');
 
@@ -284,6 +285,7 @@
         statDanger.textContent = stats.danger_count || 0;
         statWarning.textContent = stats.warning_count || 0;
         statSafe.textContent = stats.safe_count || 0;
+        if (statMachine) statMachine.textContent = stats.machine_danger_count || 0;
 
         // Frame progress
         const fc = data.frame_count || 0;
@@ -383,6 +385,7 @@
         statDanger.textContent = '0';
         statWarning.textContent = '0';
         statSafe.textContent = '0';
+        if (statMachine) statMachine.textContent = '0';
         statFrame.textContent = '0 / 0';
         statElapsed.textContent = '00:00';
 

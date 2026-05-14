@@ -63,7 +63,7 @@ body { font-family: 'Rajdhani', sans-serif; background: var(--bg-deepest); color
 
 .team-section { text-align: center; }
 .team-section h2 { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 32px; }
-.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
 .team-card {
     background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px;
     padding: 32px 24px; text-align: center; transition: all 0.3s;
@@ -73,7 +73,11 @@ body { font-family: 'Rajdhani', sans-serif; background: var(--bg-deepest); color
     width: 72px; height: 72px; border-radius: 50%;
     background: var(--yellow-dim); border: 2px solid var(--yellow-border);
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 16px; font-size: 1.5rem;
+    margin: 0 auto 16px; font-size: 1.5rem; overflow: hidden;
+}
+.avatar-img {
+    width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+    display: block;
 }
 .team-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
 .team-card .role { font-size: 0.78rem; color: var(--yellow); font-weight: 600; margin-bottom: 10px; display: block; }
@@ -85,5 +89,6 @@ body { font-family: 'Rajdhani', sans-serif; background: var(--bg-deepest); color
 .footer-brand-name { font-family: 'Orbitron', sans-serif; font-size: 1rem; font-weight: 800; color: var(--yellow); }
 .footer-copy { font-size: 0.82rem; color: var(--text-muted); }
 
-@media (max-width: 900px) { .about-grid, .team-grid { grid-template-columns: 1fr 1fr; } .stats-row { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 1100px) { .team-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 900px) { .about-grid { grid-template-columns: 1fr 1fr; } .stats-row { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .about-grid, .team-grid, .stats-row { grid-template-columns: 1fr; } .nav-links { display: none; } }

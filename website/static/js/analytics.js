@@ -13,6 +13,7 @@
         'NEAR EDGE / HEIGHT DANGER': 'purple',
         'FALLING OBJECT!': 'red',
         'MOTIONLESS - CHECK PERSON': 'amber',
+        'PERSON IN DANGER': 'orange',
     };
 
     function getBarColor(type) {

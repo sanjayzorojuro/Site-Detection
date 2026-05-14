@@ -9,12 +9,16 @@ and stores violations in MongoDB.
 import asyncio
 import logging
 import os
+import smtplib
 import sys
 import threading
 import time
 import uuid
 from datetime import datetime, timezone
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from pathlib import Path
+from pydantic import BaseModel
 
 import cv2
 import numpy as np
@@ -195,10 +199,18 @@ def _process_video(video_path: str, video_name: str):
 
             state.frame_count += 1
             frame_start = time.time()
+
+            # Resize large frames to keep pipeline fast
+            h, w = frame.shape[:2]
+            max_w = 960
+            if w > max_w:
+                scale = max_w / w
+                frame = cv2.resize(frame, (max_w, int(h * scale)))
+
             annotated_frame, detections = det.process_frame(frame)
 
             # Encode frame as JPEG for streaming
-            _, jpeg = cv2.imencode(".jpg", annotated_frame, [cv2.IMWRITE_JPEG_QUALITY, 75])
+            _, jpeg = cv2.imencode(".jpg", annotated_frame, [cv2.IMWRITE_JPEG_QUALITY, 80])
             state.current_frame = jpeg.tobytes()
             state.latest_detections = detections
             state.fps = det.fps_display
@@ -447,7 +459,7 @@ async def video_feed():
                     frame +
                     b"\r\n"
                 )
-            await asyncio.sleep(0.033)  # ~30fps cap
+            await asyncio.sleep(0.025)  # ~40fps cap for smooth playback
 
     return StreamingResponse(
         generate(),
@@ -594,3 +606,89 @@ async def list_test_videos():
         size_mb = f.stat().st_size / (1024 * 1024)
         videos.append({"name": f.name, "size_mb": round(size_mb, 1)})
     return {"videos": videos}
+
+
+# ─── Contact Form ─────────────────────────────────────────────────────────────
+
+# ▸ Set your email credentials here or via environment variables:
+#   CONTACT_EMAIL       = the Gmail address that SENDS the email
+#   CONTACT_EMAIL_PASS  = Gmail App Password (NOT your login password)
+#   CONTACT_RECIPIENT   = the email address that RECEIVES the messages
+#
+# To generate a Gmail App Password:
+#   1. Enable 2-Step Verification on your Google account
+#   2. Go to https://myaccount.google.com/apppasswords
+#   3. Create an App Password and paste it below / in env var
+
+CONTACT_EMAIL      = os.getenv("CONTACT_EMAIL", "sanjayraops17@gmail.com")
+CONTACT_EMAIL_PASS = os.getenv("CONTACT_EMAIL_PASS", "96637761407483050218")
+CONTACT_RECIPIENT  = os.getenv("CONTACT_RECIPIENT", CONTACT_EMAIL)
+
+
+class ContactForm(BaseModel):
+    name: str
+    email: str
+    subject: str
+    message: str
+
+
+@app.post("/api/contact")
+async def contact_form(form: ContactForm):
+    """Receive a contact form submission, store it, and email it."""
+    # Store in MongoDB (or fallback)
+    db = None
+    try:
+        from backend.database import get_db
+        db = get_db()
+    except Exception:
+        pass
+
+    doc = {
+        "name": form.name,
+        "email": form.email,
+        "subject": form.subject,
+        "message": form.message,
+        "timestamp": datetime.now(),
+        "read": False,
+    }
+
+    if db is not None:
+        try:
+            db.contact_messages.insert_one(doc)
+        except Exception as e:
+            logger.warning(f"Failed to store contact message: {e}")
+
+    # Send email via SMTP (Gmail)
+    email_sent = False
+    if CONTACT_EMAIL_PASS != "your-app-password":
+        try:
+            msg = MIMEMultipart()
+            msg["From"] = CONTACT_EMAIL
+            msg["To"] = CONTACT_RECIPIENT
+            msg["Subject"] = f"[SafeSite Contact] {form.subject}"
+
+            body = (
+                f"New message from SafeSite AI contact form:\n\n"
+                f"Name:    {form.name}\n"
+                f"Email:   {form.email}\n"
+                f"Subject: {form.subject}\n\n"
+                f"Message:\n{form.message}\n"
+            )
+            msg.attach(MIMEText(body, "plain"))
+
+            with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                server.starttls()
+                server.login(CONTACT_EMAIL, CONTACT_EMAIL_PASS)
+                server.send_message(msg)
+            email_sent = True
+            logger.info(f"Contact email sent to {CONTACT_RECIPIENT} from {form.email}")
+        except Exception as e:
+            logger.warning(f"Email send failed: {e}")
+
+    return {
+        "status": "received",
+        "email_sent": email_sent,
+        "message": "Thank you! Your message has been received."
+            + (" We'll get back to you soon." if email_sent else
+               " (Email delivery pending — message stored in database.)")
+    }
