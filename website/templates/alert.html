@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alerts — SafeSite AI</title>
+    <title>Alerts — SiteSpark</title>
     <meta name="description" content="View all recorded safety violations from construction site monitoring sessions.">
     <link rel="stylesheet" href="/static/css/alert.css?v={{ v }}">
 </head>
+
 <body>
     <nav class="nav">
         <a href="/" class="nav-brand">
             <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-                <path d="M4 20 Q14 6 24 20" stroke="#f2c200" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#f2c200"/>
-                <circle cx="14" cy="11" r="3" fill="#f2c200"/>
+                <path d="M4 20 Q14 6 24 20" stroke="#f2c200" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#f2c200" />
+                <circle cx="14" cy="11" r="3" fill="#f2c200" />
             </svg>
-            <span>SafeSite AI</span>
+            <span>SiteSpark </span>
         </a>
         <div class="nav-links">
             <a href="/">Home</a>
@@ -45,7 +47,7 @@
                     <option value="PERSON IN DANGER">Machine Proximity</option>
                 </select>
                 <select id="filter-video" class="filter-select">
-                    <option value="">All Videos</option>
+                    <option value="">All Sites</option>
                 </select>
                 <button class="refresh-btn" id="refresh-btn">↻ Refresh</button>
                 <button class="clear-btn" id="clear-btn">🗑 Clear All</button>
@@ -73,7 +75,7 @@
                     <tr>
                         <th>Risk</th>
                         <th>Violation Type</th>
-                        <th>Video Source</th>
+                        <th>Sites Video</th>
                         <th>Person ID</th>
                         <th>Frame</th>
                         <th>Timestamp</th>
@@ -81,7 +83,9 @@
                     </tr>
                 </thead>
                 <tbody id="violations-body">
-                    <tr class="empty-row"><td colspan="7">Loading violations...</td></tr>
+                    <tr class="empty-row">
+                        <td colspan="7">Loading violations...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -95,4 +99,5 @@
 
     <script src="/static/js/alerts.js?v={{ v }}"></script>
 </body>
+
 </html>
