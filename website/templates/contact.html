@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact — SafeSite AI</title>
+    <title>Contact — SiteSpark</title>
     <meta name="description"
         content="Get in touch with the SafeSite AI team for construction safety monitoring solutions.">
     <link rel="stylesheet" href="/static/css/contact.css?v={{ v }}">
@@ -20,7 +20,7 @@
             </svg>
             <span>SiteSpark </span>
         </a>
-        <div class="nav-links">
+        <div class="nav-links" id="navLinks">
             <a href="/">Home</a>
             <a href="/monitor">Live Monitor</a>
             <a href="/alerts">Alerts</a>
@@ -28,6 +28,9 @@
             <a href="/about">About</a>
             <a href="/contact" class="active">Contact</a>
         </div>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
 
     <main class="contact-main">
@@ -176,6 +179,15 @@
     </footer>
 
     <script>
+        // Hamburger menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('open');
+                navLinks.classList.toggle('open');
+            });
+        }
         // Contact form — sends to backend API
         document.getElementById('contactForm').addEventListener('submit', async function (e) {
             e.preventDefault();

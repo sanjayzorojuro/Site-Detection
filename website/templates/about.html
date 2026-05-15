@@ -20,7 +20,7 @@
             </svg>
             <span>SiteSpark </span>
         </a>
-        <div class="nav-links">
+        <div class="nav-links" id="navLinks">
             <a href="/">Home</a>
             <a href="/monitor">Live Monitor</a>
             <a href="/alerts">Alerts</a>
@@ -28,6 +28,9 @@
             <a href="/about" class="active">About</a>
             <a href="/contact">Contact</a>
         </div>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
 
     <main class="about-main">
@@ -154,6 +157,16 @@
             <span class="footer-copy">© 2026 Smart Construction Safety System. All rights reserved.</span>
         </div>
     </footer>
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('open');
+                navLinks.classList.toggle('open');
+            });
+        }
+    </script>
 </body>
 
 </html>

@@ -221,10 +221,64 @@ body {
 .alerts-feed::-webkit-scrollbar-track { background: transparent; }
 .alerts-feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+/* ═══ Hamburger ═══ */
+.hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 8px;
+}
+.hamburger span {
+    display: block; width: 24px; height: 2px;
+    background: #fff; border-radius: 2px; transition: all 0.3s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
 /* ═══ Responsive ═══ */
 @media (max-width: 900px) {
-    .detection-section { flex-direction: column; }
-    .stats-panel { width: 100%; flex-direction: row; flex-wrap: wrap; }
-    .stat-card { flex: 1; min-width: 120px; }
-    .nav-links { display: none; }
+    .nav-links {
+        display: none; position: absolute;
+        top: 60px; left: 0; right: 0; flex-direction: column;
+        background: rgba(5,5,5,0.98); backdrop-filter: blur(24px);
+        border-bottom: 1px solid var(--glass-border);
+        padding: 14px 0; gap: 2px; z-index: 99;
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 14px 28px; border-radius: 0; }
+    .hamburger { display: flex; }
+    .nav-status { font-size: 0.68rem; }
+
+    .detection-section { flex-direction: column; min-height: auto; }
+    .video-panel { min-height: 280px; }
+    .stats-panel {
+        width: 100%; flex-direction: row; flex-wrap: wrap;
+        overflow-y: visible; max-height: none;
+    }
+    .stats-panel h3 { width: 100%; }
+    .stat-card { flex: 1 1 calc(50% - 6px); min-width: 130px; }
+
+    .input-header { flex-direction: column; gap: 12px; align-items: flex-start; }
+    .input-controls { width: 100%; }
+
+    .risk-graph-header { flex-direction: column; gap: 8px; align-items: flex-start; }
+    .risk-graph-header .graph-legend { flex-wrap: wrap; }
+
+    .alerts-section { max-height: 320px; }
+    .alert-item { flex-wrap: wrap; gap: 8px; }
+    .alert-type { flex: 1 1 100%; }
+}
+@media (max-width: 480px) {
+    .layout { padding: 10px; gap: 10px; }
+    .input-section { padding: 14px 16px; }
+    .input-controls button, .input-controls label {
+        font-size: 0.75rem; padding: 7px 12px; flex: 1 1 calc(50% - 4px);
+        justify-content: center;
+    }
+    .stat-card { flex: 1 1 100%; }
+    .stat-value { font-size: 0.95rem; }
+    .video-panel { min-height: 220px; }
+    .risk-graph-section { padding: 14px 16px; }
+    #risk-graph-canvas { height: 90px; }
+    .alerts-section { padding: 14px 16px; }
+    .nav { padding: 0 16px; }
 }

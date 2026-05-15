@@ -31,6 +31,9 @@
             <span class="status-dot offline" id="status-dot"></span>
             <span id="status-text">Offline</span>
         </div>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
     </nav>
 
     <div class="layout">
@@ -167,6 +170,16 @@
     </div>
 
     <script src="/static/js/monitor.js?v={{ v }}"></script>
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('open');
+                navLinks.classList.toggle('open');
+            });
+        }
+    </script>
 </body>
 
 </html>

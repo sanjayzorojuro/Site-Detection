@@ -412,22 +412,51 @@ body {
     background: var(--green-dim);
 }
 
-@media (max-width: 900px) {
-    .analytics-summary {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .charts-row {
-        grid-template-columns: 1fr;
-    }
+/* ═══ Hamburger ═══ */
+.hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 8px;
 }
+.hamburger span {
+    display: block; width: 24px; height: 2px;
+    background: #fff; border-radius: 2px; transition: all 0.3s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-@media (max-width: 600px) {
-    .analytics-summary {
-        grid-template-columns: 1fr;
-    }
-
+/* ═══ Responsive ═══ */
+@media (max-width: 900px) {
+    .analytics-summary { grid-template-columns: repeat(2, 1fr); }
+    .charts-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
     .nav-links {
-        display: none;
+        display: none; position: absolute;
+        top: 60px; left: 0; right: 0; flex-direction: column;
+        background: rgba(5,5,5,0.98); backdrop-filter: blur(24px);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        padding: 14px 0; gap: 2px; z-index: 99;
     }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 14px 28px; border-radius: 0; }
+    .hamburger { display: flex; }
+
+    .donut-chart { flex-direction: column; align-items: center; }
+    .donut-ring { width: 120px; height: 120px; }
+
+    .videos-panel { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .videos-table { min-width: 600px; }
+
+    .page-layout { padding: 16px; }
+    .bar-label { min-width: 100px; font-size: 0.72rem; }
+}
+@media (max-width: 480px) {
+    .analytics-summary { grid-template-columns: 1fr; }
+    .page-layout { padding: 12px; }
+    .a-card { padding: 16px; gap: 12px; }
+    .a-val { font-size: 1.3rem; }
+    .chart-panel { padding: 16px; }
+    .bar-label { min-width: 80px; font-size: 0.68rem; }
+    .nav { padding: 0 16px; }
 }
