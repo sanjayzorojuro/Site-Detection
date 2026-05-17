@@ -254,15 +254,31 @@
     jibGroup.position.set(0.5, towerTopY + 0.9, 0);
     craneGroup.add(jibGroup);
 
-    // ── Counter-Jib (Back arm) ──
+    // ── Counter-Jib (Back arm — full lattice matching main jib) ──
     const counterJibGroup = new THREE.Group();
-    const cjibLength = 3.5;
-    for (let i = 0; i < 3; i++) {
-        const section = createLatticeBrace(0.25, 0.28, 0.25, catYellow);
+    const cjibLength = 4;
+    const cjibSections = 4;
+    const cjibSectionLen = cjibLength / cjibSections;
+    for (let i = 0; i < cjibSections; i++) {
+        const sectionW = 0.25;
+        const section = createLatticeBrace(sectionW, 0.28, sectionW, catYellow);
         section.rotation.z = Math.PI / 2;
-        section.position.set(-(cjibLength / 3) / 2 - i * (cjibLength / 3), 0, 0);
+        section.position.set(-(cjibSectionLen / 2 + i * cjibSectionLen), 0, 0);
         counterJibGroup.add(section);
     }
+
+    // Counter-jib bottom chord bar (matches main jib style)
+    const cjibBarGeo = new THREE.BoxGeometry(cjibLength, 0.06, 0.06);
+    const cjibBar = new THREE.Mesh(cjibBarGeo, catYellowDark);
+    cjibBar.position.set(-cjibLength / 2, -0.14, 0);
+    counterJibGroup.add(cjibBar);
+
+    // Counter-jib top chord bar
+    const cjibTopBarGeo = new THREE.BoxGeometry(cjibLength, 0.06, 0.06);
+    const cjibTopBar = new THREE.Mesh(cjibTopBarGeo, catYellowDark);
+    cjibTopBar.position.set(-cjibLength / 2, 0.14, 0);
+    counterJibGroup.add(cjibTopBar);
+
     counterJibGroup.position.set(0, towerTopY + 0.9, 0);
     craneGroup.add(counterJibGroup);
 
