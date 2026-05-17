@@ -106,21 +106,41 @@ body { font-family: 'Exo 2', sans-serif; background: var(--bg-deepest); color: v
 
 /* Responsive */
 @media (max-width: 768px) {
-    .nav-links { display: none; position: absolute; top: 60px; left: 0; right: 0; flex-direction: column; background: rgba(5,5,5,0.98); backdrop-filter: blur(24px); border-bottom: 1px solid var(--glass-border); padding: 14px 0; gap: 2px; z-index: 99; }
+    .nav-links { display: none; position: absolute; top: 60px; left: 0; right: 0; flex-direction: column; background: rgba(5,5,5,0.98); backdrop-filter: blur(24px); border-bottom: 1px solid var(--glass-border); padding: 14px 0; gap: 2px; z-index: 9999; }
     .nav-links.open { display: flex; }
     .nav-links a { padding: 14px 28px; border-radius: 0; }
     .hamburger { display: flex; }
-    .contact-grid { grid-template-columns: 1fr; }
-    .contact-main { padding: 32px 20px 60px; }
-    .info-card, .form-card { padding: 28px 24px; }
+    .contact-grid { grid-template-columns: 1fr; gap: 16px; }
+    .contact-main { padding: 28px 16px 50px; }
+    .contact-hero h1 { font-size: clamp(1.3rem, 4vw, 1.8rem); }
+    .contact-hero p { font-size: 0.88rem; }
+    .info-card, .form-card { padding: 24px 20px; border-radius: 16px; }
+    .info-card h2 { font-size: 1.1rem; }
     .footer-inner { flex-direction: column; text-align: center; }
+    .footer { padding: 20px 16px; }
 }
 @media (max-width: 480px) {
-    .contact-main { padding: 24px 16px 48px; }
-    .info-card, .form-card { padding: 24px 18px; }
-    .contact-hero h1 { font-size: 1.4rem; }
-    .info-row { gap: 12px; }
-    .info-icon-box { width: 40px; height: 40px; }
-    .nav { padding: 0 16px; }
-    .footer { padding: 20px 16px; }
+    .nav { padding: 0 12px; height: 56px; }
+    .nav-brand { font-size: 0.88rem; }
+    .contact-main { padding: 20px 12px 40px; }
+    .contact-hero { margin-bottom: 32px; }
+    .contact-hero h1 { font-size: 1.2rem; }
+    .contact-hero p { font-size: 0.82rem; }
+    .info-card, .form-card { padding: 20px 16px; }
+    .info-card h2 { font-size: 1rem; }
+    .info-card .info-desc { font-size: 0.82rem; }
+    .info-row { gap: 10px; margin-bottom: 18px; }
+    .info-icon-box { width: 38px; height: 38px; border-radius: 10px; }
+    .info-label { font-size: 0.66rem; }
+    .info-value { font-size: 0.82rem; }
+    .form-label { font-size: 0.78rem; }
+    .form-input { font-size: 0.84rem; padding: 11px 12px 11px 38px; }
+    .send-btn { padding: 12px; font-size: 0.88rem; }
+    .footer-brand-name { font-size: 0.88rem; }
+    .footer-copy { font-size: 0.72rem; }
+}
+@media (max-width: 360px) {
+    .contact-hero h1 { font-size: 1.05rem; }
+    .info-card h2 { font-size: 0.92rem; }
+    .form-input { font-size: 0.8rem; }
 }

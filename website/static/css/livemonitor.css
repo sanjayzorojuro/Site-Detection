@@ -292,17 +292,34 @@ body {
     .alert-type { flex: 1 1 100%; }
 }
 @media (max-width: 480px) {
-    .layout { padding: 10px; gap: 10px; }
-    .input-section { padding: 14px 16px; }
+    .layout { padding: 8px; gap: 8px; }
+    .nav { padding: 0 12px; height: 56px; }
+    .nav-brand { font-size: 0.88rem; }
+    .nav-status { display: none; }
+    .input-section { padding: 12px; }
+    .input-header h2 { font-size: 0.88rem; }
+    .input-controls { gap: 6px; }
     .input-controls button, .input-controls label {
-        font-size: 0.75rem; padding: 7px 12px; flex: 1 1 calc(50% - 4px);
-        justify-content: center;
+        font-size: 0.72rem; padding: 7px 10px; flex: 1 1 calc(50% - 3px);
+        justify-content: center; gap: 4px;
     }
-    .stat-card { flex: 1 1 100%; }
-    .stat-value { font-size: 0.95rem; }
-    .video-panel { min-height: 220px; }
-    .risk-graph-section { padding: 14px 16px; }
-    #risk-graph-canvas { height: 90px; }
-    .alerts-section { padding: 14px 16px; }
-    .nav { padding: 0 16px; }
+    .stat-card { flex: 1 1 100%; padding: 8px 12px; }
+    .stat-label { font-size: 0.68rem; }
+    .stat-value { font-size: 0.92rem; }
+    .video-panel { min-height: 200px; }
+    .risk-graph-section { padding: 12px; }
+    .risk-graph-header h3 { font-size: 0.82rem; }
+    #risk-graph-canvas { height: 80px; }
+    .alerts-section { padding: 12px; max-height: 280px; }
+    .alerts-header h3 { font-size: 0.82rem; }
+    .alert-item { padding: 8px 10px; gap: 8px; }
+    .alert-type { font-size: 0.78rem; }
+    .alert-time { font-size: 0.64rem; }
+    .alert-person { font-size: 0.64rem; }
+    .overlay-badge { font-size: 0.62rem; padding: 4px 10px; }
+}
+@media (max-width: 360px) {
+    .input-controls button, .input-controls label { font-size: 0.66rem; padding: 6px 8px; }
+    .video-panel { min-height: 180px; }
+    .stat-value { font-size: 0.82rem; }
 }
