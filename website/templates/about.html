@@ -51,7 +51,7 @@
 
         <!-- Features Grid -->
         <section class="about-grid">
-            <div class="about-card">
+            <div class="about-card" data-aboutmodal="detection">
                 <div class="about-card-icon">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                         <circle cx="12" cy="12" r="3" fill="#f2c200" />
@@ -63,8 +63,9 @@
                 <h3>AI-Powered Detection</h3>
                 <p>Advanced YOLOv8 and MediaPipe models detect safety violations and potential hazards with 89% accuracy
                     in real-time.</p>
+                <span class="card-more">Click to learn more →</span>
             </div>
-            <div class="about-card">
+            <div class="about-card" data-aboutmodal="monitoring">
                 <div class="about-card-icon">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                         <rect x="2" y="3" width="20" height="14" rx="2" stroke="#f2c200" stroke-width="1.8" />
@@ -75,8 +76,9 @@
                 <h3>Real-Time Monitoring</h3>
                 <p>24/7 continuous monitoring with smart cameras, video upload, and live webcam support for instant
                     safety analysis.</p>
+                <span class="card-more">Click to learn more →</span>
             </div>
-            <div class="about-card">
+            <div class="about-card" data-aboutmodal="analytics">
                 <div class="about-card-icon">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
                         <rect x="3" y="12" width="4" height="9" rx="1" fill="#f2c200" />
@@ -87,6 +89,7 @@
                 <h3>Data-Driven Insights </h3>
                 <p>Comprehensive analytics dashboard with violation trends, risk distribution, and compliance reporting
                     across all sites.</p>
+                <span class="card-more">Click to learn more →</span>
             </div>
         </section>
 
@@ -108,11 +111,10 @@
                     <div class="team-avatar">
                         <img src="/static/images/team/member1.jpg" alt="Member 1" class="avatar-img">
                     </div>
-                    <h4>Sanjay<h4>
-                            <span class="role">ML Engineer + Backend Developer + 3D Designer</span>
-                            <p>Detection pipeline, YOLO model training, Frontend 3D design, database integration and
-                                MediaPipe integration.
-                            </p>
+                    <h4>Sanjay</h4>
+                    <span class="role">ML Engineer + Backend Developer + 3D Designer</span>
+                    <p>Detection pipeline, YOLO model training, Frontend 3D design, database integration and
+                        MediaPipe integration.</p>
                 </div>
                 <div class="team-card">
                     <div class="team-avatar">
@@ -143,6 +145,16 @@
         </section>
     </main>
 
+    <!-- About Modal -->
+    <div class="modal-overlay" id="aboutModalOverlay">
+        <div class="modal-card" id="aboutModalCard">
+            <button class="modal-close" id="aboutModalClose" aria-label="Close">✕</button>
+            <div class="modal-icon" id="aboutModalIcon"></div>
+            <h2 class="modal-title" id="aboutModalTitle"></h2>
+            <div class="modal-body" id="aboutModalBody"></div>
+        </div>
+    </div>
+
     <footer class="footer">
         <div class="footer-inner">
             <div class="footer-brand">
@@ -166,6 +178,97 @@
                 navLinks.classList.toggle('open');
             });
         }
+
+        // About modal data
+        const aboutModalData = {
+            detection: {
+                icon: '🔍',
+                title: 'AI-Powered Detection System',
+                body: `<div class="modal-section">
+                    <h3>Overview</h3>
+                    <p>Our detection system combines <strong>multiple AI models</strong> working in parallel to identify 6+ types of safety violations on construction sites. The system processes video feeds frame-by-frame at <strong>30+ FPS</strong> on modern hardware.</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Models Used</h3>
+                    <div class="modal-steps">
+                        <div class="modal-step"><span class="step-num">1</span><span><strong>YOLOv8 (Custom-Trained)</strong> — Object detection for persons, helmets, vests, and heavy machinery. Trained on 5000+ annotated construction images.</span></div>
+                        <div class="modal-step"><span class="step-num">2</span><span><strong>Google MediaPipe Pose</strong> — 33-point skeletal tracking for fall detection and body orientation analysis in real-time.</span></div>
+                        <div class="modal-step"><span class="step-num">3</span><span><strong>Optical Flow (Farneback)</strong> — Motion vector analysis for detecting falling objects and fast-moving hazards above workers.</span></div>
+                        <div class="modal-step"><span class="step-num">4</span><span><strong>Proximity Engine</strong> — Spatial analysis combining person positions with detected hazards to calculate risk zones and danger scores.</span></div>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h3>Detection Categories</h3>
+                    <p>No Helmet • No Vest • Fall Detected • Motionless Person • Edge/Height Danger • Falling Objects • Heavy Machine Proximity</p>
+                </div>`
+            },
+            monitoring: {
+                icon: '📡',
+                title: 'Real-Time Monitoring System',
+                body: `<div class="modal-section">
+                    <h3>Overview</h3>
+                    <p>Our monitoring system provides <strong>24/7 continuous surveillance</strong> with support for multiple video input sources. The live dashboard shows real-time statistics, risk levels, and alert feeds powered by WebSocket streaming.</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Input Sources</h3>
+                    <div class="modal-steps">
+                        <div class="modal-step"><span class="step-num">1</span><span><strong>Video Upload</strong> — Upload pre-recorded footage (.mp4) for batch analysis. Great for reviewing past incidents.</span></div>
+                        <div class="modal-step"><span class="step-num">2</span><span><strong>Live Webcam</strong> — Connect any USB or IP camera for real-time live monitoring of active construction zones.</span></div>
+                        <div class="modal-step"><span class="step-num">3</span><span><strong>Demo Mode</strong> — Test the system with bundled sample videos to see detection capabilities before deployment.</span></div>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h3>Live Dashboard Features</h3>
+                    <p>MJPEG video stream with detection overlays • Real-time risk score gauge • Worker count tracking • FPS monitoring • WebSocket-powered alert feed • Dynamic risk graph</p>
+                </div>`
+            },
+            analytics: {
+                icon: '📊',
+                title: 'Data-Driven Analytics',
+                body: `<div class="modal-section">
+                    <h3>Overview</h3>
+                    <p>All violations detected by the system are <strong>automatically stored in MongoDB</strong>, enabling powerful historical analysis, trend tracking, and compliance reporting across all monitored construction sites.</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Analytics Features</h3>
+                    <div class="modal-steps">
+                        <div class="modal-step"><span class="step-num">1</span><span><strong>Violation Breakdown</strong> — Bar charts showing violation frequency by type (helmet, vest, fall, etc.) with color-coded severity.</span></div>
+                        <div class="modal-step"><span class="step-num">2</span><span><strong>Risk Distribution</strong> — Donut chart showing danger vs. warning vs. safe percentages across all processed videos.</span></div>
+                        <div class="modal-step"><span class="step-num">3</span><span><strong>Processed Videos Log</strong> — Complete table of all analyzed videos with frame count, violation count, risk level, and duration.</span></div>
+                        <div class="modal-step"><span class="step-num">4</span><span><strong>Alerts History</strong> — Filterable, paginated table of every violation with timestamp, worker ID, video source, and risk level.</span></div>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h3>Data Storage</h3>
+                    <p>MongoDB persistence ensures <strong>zero data loss across server restarts</strong>. All violation records include timestamps, worker IDs, bounding box coordinates, and frame numbers for full traceability.</p>
+                </div>`
+            }
+        };
+
+        const aOverlay = document.getElementById('aboutModalOverlay');
+        const aClose = document.getElementById('aboutModalClose');
+
+        function openAboutModal(key) {
+            const d = aboutModalData[key];
+            if (!d) return;
+            document.getElementById('aboutModalIcon').textContent = d.icon;
+            document.getElementById('aboutModalTitle').textContent = d.title;
+            document.getElementById('aboutModalBody').innerHTML = d.body;
+            aOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeAboutModal() {
+            aOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.querySelectorAll('.about-card[data-aboutmodal]').forEach(card => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => openAboutModal(card.dataset.aboutmodal));
+        });
+        aClose.addEventListener('click', closeAboutModal);
+        aOverlay.addEventListener('click', (e) => { if (e.target === aOverlay) closeAboutModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAboutModal(); });
     </script>
 </body>
 

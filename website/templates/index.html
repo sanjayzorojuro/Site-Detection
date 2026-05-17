@@ -12,6 +12,9 @@
 
 <body>
 
+    <!-- ═══════════ SCROLL PROGRESS ═══════════ -->
+    <div class="scroll-progress" id="scroll-progress"></div>
+
     <!-- ═══════════ NAVBAR ═══════════ -->
     <nav class="nav" id="navbar">
         <div class="nav-inner">
@@ -102,7 +105,7 @@
             <p class="section-sub">Six AI-powered modules working together for comprehensive site safety.</p>
         </div>
         <div class="features-grid">
-            <div class="feature-card reveal" id="feature-helmet">
+            <div class="feature-card reveal" id="feature-helmet" data-modal="helmet">
                 <div class="fcard-bg red"></div>
                 <div class="fcard-overlay"></div>
                 <div class="fcard-body">
@@ -114,7 +117,7 @@
                 </div>
                 <span class="fcard-arrow">→</span>
             </div>
-            <div class="feature-card reveal" id="feature-vest">
+            <div class="feature-card reveal" id="feature-vest" data-modal="vest">
                 <div class="fcard-bg amber"></div>
                 <div class="fcard-overlay"></div>
                 <div class="fcard-body">
@@ -126,7 +129,7 @@
                 </div>
                 <span class="fcard-arrow">→</span>
             </div>
-            <div class="feature-card reveal" id="feature-fall">
+            <div class="feature-card reveal" id="feature-fall" data-modal="fall">
                 <div class="fcard-bg yellow"></div>
                 <div class="fcard-overlay"></div>
                 <div class="fcard-body">
@@ -138,7 +141,7 @@
                 </div>
                 <span class="fcard-arrow">→</span>
             </div>
-            <div class="feature-card reveal" id="feature-edge">
+            <div class="feature-card reveal" id="feature-edge" data-modal="edge">
                 <div class="fcard-bg purple"></div>
                 <div class="fcard-overlay"></div>
                 <div class="fcard-body">
@@ -150,7 +153,7 @@
                 </div>
                 <span class="fcard-arrow">→</span>
             </div>
-            <div class="feature-card reveal" id="feature-falling-obj">
+            <div class="feature-card reveal" id="feature-falling-obj" data-modal="fallingobj">
                 <div class="fcard-bg green"></div>
                 <div class="fcard-overlay"></div>
                 <div class="fcard-body">
@@ -162,7 +165,7 @@
                 </div>
                 <span class="fcard-arrow">→</span>
             </div>
-            <div class="feature-card reveal" id="feature-motionless">
+            <div class="feature-card reveal" id="feature-motionless" data-modal="motionless">
                 <div class="fcard-bg red"></div>
                 <div class="fcard-overlay"></div>
                 <div class="fcard-body">
@@ -311,13 +314,32 @@
         </div>
     </footer>
 
+    <!-- ═══════════ FEATURE MODALS ═══════════ -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card" id="modalCard">
+            <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+            <div class="modal-icon" id="modalIcon"></div>
+            <div class="modal-tag" id="modalTag"></div>
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <a href="/monitor" class="btn-primary" id="modal-cta">Try it Live →</a>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="/static/js/scene.js?v={{ v }}"></script>
     <script>
-        // Navbar scroll effect
+        // Scroll progress bar
+        const scrollProgress = document.getElementById('scroll-progress');
         window.addEventListener('scroll', () => {
+            const docH = document.documentElement.scrollHeight - window.innerHeight;
+            const pct = docH > 0 ? (window.scrollY / docH) * 100 : 0;
+            scrollProgress.style.width = pct + '%';
             document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 30);
         });
+
         // Hamburger toggle
         const hamburger = document.getElementById('hamburger');
         const navLinks = document.getElementById('navLinks');
@@ -327,22 +349,197 @@
                 navLinks.classList.toggle('open');
             });
         }
-        // Reveal on scroll
+
+        // Reveal on scroll with staggered delay
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
-        }, { threshold: 0.15 });
+            entries.forEach((e, i) => {
+                if (e.isIntersecting) {
+                    setTimeout(() => e.target.classList.add('in'), i * 80);
+                }
+            });
+        }, { threshold: 0.12 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-        // Animate counters
-        document.querySelectorAll('[data-count]').forEach(el => {
-            const target = parseInt(el.getAttribute('data-count'));
-            let current = 0;
-            const step = Math.ceil(target / 40);
-            const timer = setInterval(() => {
-                current += step;
-                if (current >= target) { current = target; clearInterval(timer); }
-                el.textContent = current;
-            }, 30);
+
+        // Animate counters (triggered on visibility)
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    const el = e.target;
+                    const target = parseInt(el.getAttribute('data-count'));
+                    let current = 0;
+                    const duration = 1500;
+                    const step = target / (duration / 16);
+                    const timer = setInterval(() => {
+                        current += step;
+                        if (current >= target) { current = target; clearInterval(timer); }
+                        el.textContent = Math.round(current);
+                    }, 16);
+                    counterObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
+
+        // ═══ Feature Card Modal System ═══
+        const modalData = {
+            helmet: {
+                icon: '⛑', tag: 'CRITICAL SAFETY', tagClass: 'tag-red',
+                title: 'Helmet Detection Module',
+                body: `<div class="modal-section">
+                    <h3>How It Works</h3>
+                    <p>Our Helmet Detection module uses a custom-trained <strong>YOLOv8 object detection model</strong> that has been trained on thousands of construction site images. The model identifies two classes: <em>helmet</em> and <em>person</em>, then uses an overlap-based assignment algorithm to determine which workers are wearing helmets and which are not.</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Technical Pipeline</h3>
+                    <div class="modal-steps">
+                        <div class="modal-step"><span class="step-num">1</span><span>Video frame is captured and resized to 640×640 for inference</span></div>
+                        <div class="modal-step"><span class="step-num">2</span><span>YOLOv8 model detects all persons and helmets with bounding boxes</span></div>
+                        <div class="modal-step"><span class="step-num">3</span><span>IoU (Intersection over Union) overlap analysis assigns helmets to persons</span></div>
+                        <div class="modal-step"><span class="step-num">4</span><span>Workers without matching helmet boxes are flagged as "NO HELMET"</span></div>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h3>Why It Matters</h3>
+                    <p>Head injuries account for <strong>~25% of construction fatalities</strong>. Automated real-time helmet compliance checks ensure no worker enters a danger zone unprotected, significantly reducing traumatic brain injury risks.</p>
+                </div>`
+            },
+            vest: {
+                icon: '🦺', tag: 'HIGH PRIORITY', tagClass: 'tag-amber',
+                title: 'Vest Detection Module',
+                body: `<div class="modal-section">
+                    <h3>How It Works</h3>
+                    <p>The Vest Detection module extends the same YOLOv8 detection pipeline. After persons are detected, the system checks for the presence of <strong>high-visibility reflective safety vests</strong> using a bounding box overlap strategy similar to helmet detection.</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Technical Pipeline</h3>
+                    <div class="modal-steps">
+                        <div class="modal-step"><span class="step-num">1</span><span>Person bounding boxes are identified in the frame</span></div>
+                        <div class="modal-step"><span class="step-num">2</span><span>Vest-class objects are detected within/overlapping person bounds</span></div>
+                        <div class="modal-step"><span class="step-num">3</span><span>If no vest overlaps a person bounding box, violation is flagged</span></div>
+                        <div class="modal-step"><span class="step-num">4</span><span>"NO VEST" alert is generated and stored in the database</span></div>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h3>Why It Matters</h3>
+                    <p>Reflective vests ensure workers are visible to crane operators, vehicle drivers, and other heavy equipment. Without them, workers become <strong>nearly invisible in low-light or dusty conditions</strong> — a leading cause of struck-by accidents.</p>
+                </div>`
+            },
+            fall: {
+                icon: '🧍', tag: 'AI POSE ESTIMATION', tagClass: 'tag-yellow',
+                title: 'Fall Detection Module',
+                body: `<div class="modal-section">
+                    <h3>How It Works</h3>
+                    <p>Fall Detection uses <strong>Google MediaPipe Pose Estimation</strong> to track 33 body landmarks in real-time. The system analyzes the angle between shoulder, hip, and ankle joints to determine if a worker's body has transitioned from vertical to horizontal orientation.</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Technical Pipeline</h3>
+                    <div class="modal-steps">
+                        <div class="modal-step"><span class="step-num">1</span><span>MediaPipe extracts 33 pose landmarks from each detected person</span></div>
+                        <div class="modal-step"><span class="step-num">2</span><span>Body angle is calculated using shoulder-hip-ankle vectors</span></div>
+                        <div class="modal-step"><span class="step-num">3</span><span>If the torso angle drops below a threshold, a "possible fall" state is flagged</span></div>
+                        <div class="modal-step"><span class="step-num">4</span><span>After sustained duration (3+ seconds horizontal), a confirmed "FALL DETECTED" alert is raised</span></div>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h3>Why It Matters</h3>
+                    <p>Falls are the <strong>#1 cause of death in construction</strong> (OSHA). Early detection of a fall event can trigger immediate medical response, potentially saving lives by reducing the time between incident and first aid.</p>
+                </div>`
+            },
+            edge: {
+                icon: '⚠', tag: 'DANGER ZONE', tagClass: 'tag-purple',
+                title: 'Edge / Height Danger Module',
+                body: `<div class="modal-section">
+                    <h3>How It Works</h3>
+                    <p>This module analyzes the <strong>spatial position of workers within the video frame</strong> relative to elevation boundaries. When a worker is detected near the top edge of the frame or in a predefined height-risk zone, the system flags them as being in a height danger area.</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Technical Pipeline</h3>
+                    <div class="modal-steps">
+                        <div class="modal-step"><span class="step-num">1</span><span>Worker bounding box position is analyzed within the frame</span></div>
+                        <div class="modal-step"><span class="step-num">2</span><span>Y-coordinate relative to frame height determines elevation risk</span></div>
+                        <div class="modal-step"><span class="step-num">3</span><span>Workers in the upper 30% of the frame are flagged for height proximity</span></div>
+                        <div class="modal-step"><span class="step-num">4</span><span>"NEAR EDGE / HEIGHT DANGER" warning is generated</span></div>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h3>Why It Matters</h3>
+                    <p>Working at heights without guardrails or harnesses is extremely dangerous. This system provides an <strong>early warning before a fall actually happens</strong>, allowing supervisors to intervene proactively.</p>
+                </div>`
+            },
+            fallingobj: {
+                icon: '📦', tag: 'OPTICAL FLOW', tagClass: 'tag-green',
+                title: 'Falling Objects Module',
+                body: `<div class="modal-section">
+                    <h3>How It Works</h3>
+                    <p>The Falling Objects module uses <strong>Optical Flow analysis</strong> to detect fast-moving objects in the frame. By calculating the velocity and direction of moving elements, it identifies objects falling from above that could strike workers below.</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Technical Pipeline</h3>
+                    <div class="modal-steps">
+                        <div class="modal-step"><span class="step-num">1</span><span>Frame-to-frame optical flow vectors are computed using Farneback method</span></div>
+                        <div class="modal-step"><span class="step-num">2</span><span>Regions with strong downward velocity vectors are identified</span></div>
+                        <div class="modal-step"><span class="step-num">3</span><span>If a fast-moving region is above a detected worker, danger is flagged</span></div>
+                        <div class="modal-step"><span class="step-num">4</span><span>"FALLING OBJECT!" alert is generated with the affected worker's ID</span></div>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h3>Why It Matters</h3>
+                    <p>Falling tools, materials, and debris are responsible for <strong>thousands of construction injuries annually</strong>. Real-time detection can trigger immediate evacuation warnings to workers in the impact zone.</p>
+                </div>`
+            },
+            motionless: {
+                icon: '🚨', tag: 'EMERGENCY', tagClass: 'tag-red',
+                title: 'Motionless Detection Module',
+                body: `<div class="modal-section">
+                    <h3>How It Works</h3>
+                    <p>This module tracks each worker's <strong>movement over time</strong> by comparing their bounding box position across multiple frames. If a worker remains stationary beyond a configured threshold (typically 30+ seconds), the system flags them as potentially unconscious or injured.</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Technical Pipeline</h3>
+                    <div class="modal-steps">
+                        <div class="modal-step"><span class="step-num">1</span><span>Worker positions are tracked across frames using person IDs</span></div>
+                        <div class="modal-step"><span class="step-num">2</span><span>Displacement between current and historical positions is calculated</span></div>
+                        <div class="modal-step"><span class="step-num">3</span><span>If displacement stays below threshold for 30+ seconds, alert triggers</span></div>
+                        <div class="modal-step"><span class="step-num">4</span><span>"MOTIONLESS - CHECK PERSON" emergency alert is raised</span></div>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h3>Why It Matters</h3>
+                    <p>A motionless worker could be suffering from <strong>heat stroke, electrocution, cardiac arrest, or traumatic injury</strong>. Every second counts — this module ensures no unconscious worker goes unnoticed on a busy site.</p>
+                </div>`
+            }
+        };
+
+        // Modal DOM
+        const overlay = document.getElementById('modalOverlay');
+        const modalCard = document.getElementById('modalCard');
+        const modalClose = document.getElementById('modalClose');
+
+        function openModal(key) {
+            const d = modalData[key];
+            if (!d) return;
+            document.getElementById('modalIcon').textContent = d.icon;
+            document.getElementById('modalTag').className = 'modal-tag ' + d.tagClass;
+            document.getElementById('modalTag').textContent = d.tag;
+            document.getElementById('modalTitle').textContent = d.title;
+            document.getElementById('modalBody').innerHTML = d.body;
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Click handlers for feature cards
+        document.querySelectorAll('.feature-card[data-modal]').forEach(card => {
+            card.addEventListener('click', () => openModal(card.dataset.modal));
         });
+
+        modalClose.addEventListener('click', closeModal);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
     </script>
 </body>
 
