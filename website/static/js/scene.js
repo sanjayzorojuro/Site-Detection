@@ -364,10 +364,10 @@
     beacon.position.set(0, towerTopY + 3.0, 0);
     craneGroup.add(beacon);
 
-    // Position the whole crane — scaled down & lowered for text readability
-    const craneScale = isMobile ? 0.5 : 0.75;
+    // Position the whole crane — scaled & lowered for text readability
+    const craneScale = isMobile ? 0.55 : 0.85;
     craneGroup.scale.set(craneScale, craneScale, craneScale);
-    craneGroup.position.set(isMobile ? -1 : -2, -3.5, 0);
+    craneGroup.position.set(isMobile ? -1 : -2, -3, 0);
     scene.add(craneGroup);
 
     /* ── Background Buildings (solid, distinct colors, visible) ── */
@@ -553,9 +553,9 @@
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
-        const s = nowMobile ? 0.5 : 0.75;
+        const s = nowMobile ? 0.55 : 0.85;
         craneGroup.scale.set(s, s, s);
         craneGroup.position.x = nowMobile ? -1 : -2;
-        craneGroup.position.y = -3.5;
+        craneGroup.position.y = -3;
     });
 })();
