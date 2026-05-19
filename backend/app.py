@@ -1,10 +1,3 @@
-"""
-FastAPI Backend for Construction Site Safety Monitoring
-========================================================
-Serves the web frontend, processes video/webcam feeds through the
-unified detection pipeline, streams results via MJPEG + WebSocket,
-and stores violations in MongoDB.
-"""
 
 import asyncio
 import logging
