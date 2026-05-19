@@ -16,6 +16,7 @@ from pydantic import BaseModel
 import cv2
 import numpy as np
 from fastapi import FastAPI, File, UploadFile, WebSocket, WebSocketDisconnect, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -45,6 +46,15 @@ logger = logging.getLogger("backend")
 
 # ─── FastAPI App ──────────────────────────────────────────────────────────────
 app = FastAPI(title="Construction Site Safety Monitor", version="1.0.0")
+
+# ─── CORS (allow Vercel frontend to call this backend) ────────────────────────
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, replace with your Vercel URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ─── Static Files & Templates ────────────────────────────────────────────────
 BASE_DIR = Path(__file__).parent.parent.resolve()
@@ -633,8 +643,8 @@ async def list_test_videos():
 #   2. Go to https://myaccount.google.com/apppasswords
 #   3. Create an App Password and paste it below / in env var
 
-CONTACT_EMAIL      = os.getenv("CONTACT_EMAIL", "sanjayraops17@gmail.com")
-CONTACT_EMAIL_PASS = os.getenv("CONTACT_EMAIL_PASS", "hnfm xglv quah qdic")
+CONTACT_EMAIL      = os.getenv("CONTACT_EMAIL", "")
+CONTACT_EMAIL_PASS = os.getenv("CONTACT_EMAIL_PASS", "")
 CONTACT_RECIPIENT  = os.getenv("CONTACT_RECIPIENT", CONTACT_EMAIL)
 
 

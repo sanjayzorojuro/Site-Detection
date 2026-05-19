@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerts — SiteSpark</title>
+    <meta name="description" content="View all recorded safety violations from construction site monitoring sessions.">
+    <link rel="stylesheet" href="/static/css/alert.css">
+</head>
+
+<body>
+    <nav class="nav">
+        <a href="/" class="nav-brand">
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+                <path d="M4 20 Q14 6 24 20" stroke="#f2c200" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#f2c200" />
+                <circle cx="14" cy="11" r="3" fill="#f2c200" />
+            </svg>
+            <span>SiteSpark </span>
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="/">Home</a>
+            <a href="/monitor">Live Monitor</a>
+            <a href="/alerts" class="active">Alerts</a>
+            <a href="/analytics">Analytics</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <div class="page-layout">
+        <div class="page-header">
+            <div class="header-left">
+                <h1>⚠ Violation Records</h1>
+                <p>All detected safety violations stored for review. Data persists across sessions.</p>
+            </div>
+            <div class="header-actions">
+                <select id="filter-type" class="filter-select">
+                    <option value="">All Types</option>
+                    <option value="NO HELMET">No Helmet</option>
+                    <option value="NO VEST">No Vest</option>
+                    <option value="FALL DETECTED">Fall Detected</option>
+                    <option value="NEAR EDGE / HEIGHT DANGER">Edge Danger</option>
+                    <option value="FALLING OBJECT!">Falling Object</option>
+                    <option value="MOTIONLESS - CHECK PERSON">Motionless</option>
+                    <option value="PERSON IN DANGER">Machine Proximity</option>
+                </select>
+                <select id="filter-video" class="filter-select">
+                    <option value="">All Sites</option>
+                </select>
+                <button class="refresh-btn" id="refresh-btn">↻ Refresh</button>
+                <button class="clear-btn" id="clear-btn">🗑 Clear All</button>
+            </div>
+        </div>
+
+        <div class="violations-summary" id="violations-summary">
+            <div class="summary-card">
+                <span class="summary-val" id="total-count">0</span>
+                <span class="summary-label">Total Violations</span>
+            </div>
+            <div class="summary-card danger">
+                <span class="summary-val" id="danger-count">0</span>
+                <span class="summary-label">Danger</span>
+            </div>
+            <div class="summary-card warning">
+                <span class="summary-val" id="warning-count">0</span>
+                <span class="summary-label">Warning</span>
+            </div>
+        </div>
+
+        <div class="violations-table-wrap">
+            <table class="violations-table" id="violations-table">
+                <thead>
+                    <tr>
+                        <th>Risk</th>
+                        <th>Violation Type</th>
+                        <th>Sites Video</th>
+                        <th>Person ID</th>
+                        <th>Frame</th>
+                        <th>Timestamp</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody id="violations-body">
+                    <tr class="empty-row">
+                        <td colspan="7">Loading violations...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination" id="pagination">
+            <button class="page-btn" id="prev-btn" disabled>← Prev</button>
+            <span class="page-info" id="page-info">Page 1</span>
+            <button class="page-btn" id="next-btn">Next →</button>
+        </div>
+    </div>
+
+    <script src="/static/js/config.js"></script>
+    <script src="/static/js/alerts.js"></script>
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('open');
+                navLinks.classList.toggle('open');
+            });
+        }
+    </script>
+</body>
+
+</html>

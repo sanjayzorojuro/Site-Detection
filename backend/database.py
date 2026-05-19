@@ -6,6 +6,7 @@ Uses pymongo to connect to a local MongoDB instance.
 """
 
 import logging
+import os
 from datetime import datetime, timezone
 from pymongo import MongoClient, DESCENDING
 from bson import ObjectId
@@ -13,8 +14,8 @@ from bson import ObjectId
 logger = logging.getLogger("database")
 
 # ─── MongoDB Connection ───────────────────────────────────────────────────────
-MONGO_URI = "mongodb://localhost:27017"
-DB_NAME = "construction_safety"
+MONGO_URI =os.getenv("MONGO_URI", "mongodb://localhost:27017")
+DB_NAME = os.getenv("DB_NAME", "construction_safety")
 
 _client = None
 _db = None

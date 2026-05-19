@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Monitor — SiteSpark </title>
+    <meta name="description" content="Real-time construction site safety monitoring with AI detection overlays.">
+    <link rel="stylesheet" href="/static/css/livemonitor.css">
+</head>
+
+<body>
+    <nav class="nav">
+        <a href="/" class="nav-brand">
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+                <path d="M4 20 Q14 6 24 20" stroke="#f2c200" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#f2c200" />
+                <circle cx="14" cy="11" r="3" fill="#f2c200" />
+            </svg>
+            <span>SiteSpark </span>
+        </a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/monitor" class="active">Live Monitor</a>
+            <a href="/alerts">Alerts</a>
+            <a href="/analytics">Analytics</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <div class="nav-status" id="nav-status">
+            <span class="status-dot offline" id="status-dot"></span>
+            <span id="status-text">Offline</span>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <div class="layout">
+        <!-- ═══ TOP: Video Input Controls ═══ -->
+        <section class="input-section" id="input-section">
+            <div class="input-header">
+                <h2>Video Source</h2>
+                <div class="input-controls">
+                    <label class="upload-btn" id="upload-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                        Upload Video
+                        <input type="file" id="video-file-input" accept="video/*" hidden>
+                    </label>
+                    <button class="webcam-btn" id="webcam-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M23 7l-7 5 7 5V7z" />
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                        </svg>
+                        Site Webcam
+                    </button>
+                    <button class="demo-btn" id="demo-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3" />
+                        </svg>
+                        Demo Video
+                    </button>
+                    <button class="stop-btn" id="stop-btn" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="6" y="6" width="12" height="12" rx="1" />
+                        </svg>
+                        Stop
+                    </button>
+                </div>
+            </div>
+            <div class="progress-bar" id="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </section>
+
+        <!-- ═══ MIDDLE: Detection View ═══ -->
+        <section class="detection-section" id="detection-section">
+            <div class="video-panel" id="video-panel">
+                <div class="video-placeholder" id="video-placeholder">
+                    <div class="placeholder-icon">📷</div>
+                    <p>Select a video source above to begin detection</p>
+                    <span class="placeholder-hint">Upload a video, use your webcam, or try a demo</span>
+                </div>
+                <img id="video-feed" src="" alt="Live Detection Feed" style="display:none;">
+                <div class="video-overlay" id="video-overlay">
+                    <div class="overlay-badge" id="fps-badge" style="display: none;">-- FPS</div>
+                    <div class="overlay-badge source" id="source-badge">--</div>
+                </div>
+            </div>
+            <div class="stats-panel" id="stats-panel">
+                <h3>Detection Stats</h3>
+                <div class="stat-card">
+                    <span class="stat-label">Workers Detected</span>
+                    <span class="stat-value" id="stat-workers">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Helmet Compliance</span>
+                    <span class="stat-value green" id="stat-helmet">100%</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Vest Compliance</span>
+                    <span class="stat-value green" id="stat-vest">100%</span>
+                </div>
+                <div class="stat-card risk">
+                    <span class="stat-label">Risk Score</span>
+                    <div class="risk-gauge">
+                        <div class="risk-bar" id="risk-bar"></div>
+                    </div>
+                    <span class="stat-value" id="stat-risk">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Danger</span>
+                    <span class="stat-value red" id="stat-danger">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Warnings</span>
+                    <span class="stat-value amber" id="stat-warning">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Safe</span>
+                    <span class="stat-value green" id="stat-safe">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Machine Danger</span>
+                    <span class="stat-value red" id="stat-machine">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Frame</span>
+                    <span class="stat-value mono" id="stat-frame">0 / 0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Elapsed</span>
+                    <span class="stat-value mono" id="stat-elapsed">00:00</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ RISK GRAPH: Real-time danger level ═══ -->
+        <section class="risk-graph-section" id="risk-graph-section">
+            <div class="risk-graph-header">
+                <h3>Real-time Risk Level</h3>
+                <div class="graph-legend">
+                    <span><span class="dot g"></span> Safe (0–30)</span>
+                    <span><span class="dot a"></span> Warning (30–60)</span>
+                    <span><span class="dot r"></span> Danger (60–100)</span>
+                </div>
+            </div>
+            <canvas id="risk-graph-canvas"></canvas>
+        </section>
+
+        <!-- ═══ BOTTOM: Real-time Alerts ═══ -->
+        <section class="alerts-section" id="alerts-section">
+            <div class="alerts-header">
+                <h3>Real-time Alerts</h3>
+                <span class="alert-count" id="alert-count">0 alerts</span>
+            </div>
+            <div class="alerts-feed" id="alerts-feed">
+                <div class="alert-empty" id="alert-empty">No alerts yet. Start a detection session to see real-time
+                    violations.</div>
+            </div>
+        </section>
+    </div>
+
+    <script src="/static/js/config.js"></script>
+    <script src="/static/js/monitor.js"></script>
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('open');
+                navLinks.classList.toggle('open');
+            });
+        }
+    </script>
+</body>
+
+</html>

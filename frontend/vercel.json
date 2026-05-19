@@ -1,0 +1,17 @@
+{
+  "rewrites": [
+    { "source": "/monitor", "destination": "/monitor.html" },
+    { "source": "/alerts", "destination": "/alerts.html" },
+    { "source": "/analytics", "destination": "/analytics.html" },
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/contact", "destination": "/contact.html" }
+  ],
+  "headers": [
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ]
+}

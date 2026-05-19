@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics — SiteSpark </title>
+    <meta name="description" content="Safety analytics dashboard with risk analysis and violation statistics.">
+    <link rel="stylesheet" href="/static/css/analytics.css">
+</head>
+
+<body>
+    <nav class="nav">
+        <a href="/" class="nav-brand">
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+                <path d="M4 20 Q14 6 24 20" stroke="#f2c200" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                <rect x="6" y="20" width="16" height="4" rx="1.5" fill="#f2c200" />
+                <circle cx="14" cy="11" r="3" fill="#f2c200" />
+            </svg>
+            <span>SiteSpark </span>
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="/">Home</a>
+            <a href="/monitor">Live Monitor</a>
+            <a href="/alerts">Alerts</a>
+            <a href="/analytics" class="active">Analytics</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <div class="page-layout">
+        <div class="page-header">
+            <h1>Safety Analytics</h1>
+            <p>Aggregated risk analysis and violation statistics from all monitoring sessions.</p>
+        </div>
+
+        <div class="analytics-summary" id="analytics-summary">
+            <div class="a-card total">
+                <div class="a-card-icon">📋</div>
+                <div class="a-card-data">
+                    <span class="a-val" id="a-total">0</span>
+                    <span class="a-label">Total Violations</span>
+                </div>
+            </div>
+            <div class="a-card videos">
+                <div class="a-card-icon">🎬</div>
+                <div class="a-card-data">
+                    <span class="a-val" id="a-videos">0</span>
+                    <span class="a-label">Videos Processed</span>
+                </div>
+            </div>
+            <div class="a-card danger">
+                <div class="a-card-icon">🔴</div>
+                <div class="a-card-data">
+                    <span class="a-val" id="a-danger">0</span>
+                    <span class="a-label">Danger Events</span>
+                </div>
+            </div>
+            <div class="a-card warning">
+                <div class="a-card-icon">🟡</div>
+                <div class="a-card-data">
+                    <span class="a-val" id="a-warning">0</span>
+                    <span class="a-label">Warnings</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-row">
+            <div class="chart-panel" id="type-chart-panel">
+                <h3>Violations by Type</h3>
+                <div class="bar-chart" id="type-chart"></div>
+            </div>
+            <div class="chart-panel" id="risk-chart-panel">
+                <h3>Risk Distribution</h3>
+                <div class="donut-chart" id="risk-chart">
+                    <div class="donut-ring" id="donut-ring">
+                        <svg viewBox="0 0 36 36" class="donut-svg">
+                            <circle class="donut-bg" cx="18" cy="18" r="15.9" fill="none" stroke="#1a1a1a"
+                                stroke-width="3" />
+                            <circle class="donut-segment" id="seg-danger" cx="18" cy="18" r="15.9" fill="none"
+                                stroke="#ef4444" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25" />
+                            <circle class="donut-segment" id="seg-warning" cx="18" cy="18" r="15.9" fill="none"
+                                stroke="#f59e0b" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25" />
+                            <circle class="donut-segment" id="seg-safe" cx="18" cy="18" r="15.9" fill="none"
+                                stroke="#22c55e" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="25" />
+                        </svg>
+                    </div>
+                    <div class="donut-legend" id="donut-legend"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="videos-panel">
+            <h3>Processed Sites</h3>
+            <table class="videos-table" id="videos-table">
+                <thead>
+                    <tr>
+                        <th>Sites Name</th>
+                        <th>Frames</th>
+                        <th>Violations</th>
+                        <th>Risk Level</th>
+                        <th>Duration</th>
+                        <th>Date Processed</th>
+                    </tr>
+                </thead>
+                <tbody id="videos-body">
+                    <tr>
+                        <td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted)">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/static/js/config.js"></script>
+    <script src="/static/js/analytics.js"></script>
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('open');
+                navLinks.classList.toggle('open');
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,8 +1,11 @@
 venv/
 __pycache__/
-*.pt
 runs/
 *.log
 .env
 dataset
 *.mp4
+uploads/
+# Root-level model files (duplicates, not needed for deployment)
+/yolo*.pt
+/yolov8*.pt
