@@ -1,0 +1,136 @@
+# Deploy SafeSite AI — Vercel (Frontend) + Render (Backend) + MongoDB Atlas
+
+## Architecture
+
+```mermaid
+graph LR
+    A["Vercel (Free)"] -->|"API calls"| B["Render (Free)"]
+    B -->|"Read/Write"| C["MongoDB Atlas (Free)"]
+    
+    A -->|"Serves"| D["HTML, CSS, JS, Images"]
+    B -->|"Serves"| E["FastAPI + YOLO + OpenCV"]
+
+    style A fill:#000,stroke:#fff,color:#fff
+    style B fill:#4F46E5,stroke:#fff,color:#fff
+    style C fill:#00684A,stroke:#fff,color:#fff
+```
+
+**How it works:**
+- User visits your Vercel URL → gets the static frontend instantly (no cold start)
+- Frontend JS makes API calls to your Render backend URL for data/video processing
+- Backend reads/writes to MongoDB Atlas (cloud database)
+- Locally, you keep using `localhost:27017` (Compass) — the code auto-switches based on env vars
+
+---
+
+## MongoDB Atlas + Compass Explanation
+
+> [!IMPORTANT]
+> **You don't lose your local Compass database.** Here's how it works:
+
+Your updated `database.py` already reads `MONGO_URI` from environment variables:
+```python
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+```
+
+| Environment | What Happens |
+|---|---|
+| **Local development** (no env var set) | Connects to `mongodb://localhost:27017` → your Compass database |
+| **Render deployment** (env var set) | Connects to `mongodb+srv://...` → MongoDB Atlas cloud |
+
+**They are separate databases.** Your local Compass data stays untouched. The deployed app uses a fresh Atlas database. If you want to migrate existing data from Compass to Atlas, you can use MongoDB Compass's "Export Collection" → "Import" feature, but it's not required.
+
+---
+
+## Proposed Changes
+
+### Step 1: Create the Vercel frontend directory
+
+We need a new `frontend/` folder at the project root with static HTML files (converted from Jinja2 templates). The only Jinja2 feature used is `{{ v }}` for cache busting — we'll replace that with a JS-based approach.
+
+#### Directory structure:
+```
+frontend/              ← NEW (deployed to Vercel)
+├── index.html         ← converted from templates/index.html
+├── monitor.html       ← converted from templates/livemonitor.html
+├── alerts.html        ← converted from templates/alert.html
+├── analytics.html     ← converted from templates/analytics.html
+├── about.html         ← converted from templates/about.html
+├── contact.html       ← converted from templates/contact.html
+├── static/
+│   ├── css/           ← copied from website/static/css/
+│   ├── js/            ← copied from website/static/js/ (with API URL changes)
+│   └── images/        ← copied from website/static/images/
+├── vercel.json        ← Vercel routing config
+└── package.json       ← minimal, for Vercel detection
+```
+
+**Changes needed in HTML files:**
+- Remove `?v={{ v }}` cache busting → Vercel handles caching automatically
+- Nav links: `/monitor` → `monitor.html`, `/alerts` → `alerts.html`, etc.
+
+**Changes needed in JS files:**
+- All `/api/...` calls → `https://YOUR-RENDER-URL.onrender.com/api/...`
+- WebSocket URL → `wss://YOUR-RENDER-URL.onrender.com/ws/detections`
+- Video feed URL → `https://YOUR-RENDER-URL.onrender.com/api/video-feed`
+- We'll use a single `config.js` file with the backend URL so it's easy to change
+
+### Step 2: Backend changes for CORS
+
+#### [MODIFY] [app.py](file:///x:/Construction-Site/backend/app.py)
+- Add CORS middleware to allow requests from Vercel domain
+- Keep existing Jinja2 template serving for local dev (both modes work)
+
+### Step 3: Deployment files
+
+#### [NEW] `Procfile` (project root)
+- Tells Render how to start the app
+
+#### [NEW] `frontend/vercel.json`
+- Routing config for clean URLs (`/monitor` → `monitor.html`)
+
+#### [NEW] `frontend/static/js/config.js`
+- Single place to set the Render backend URL
+
+### Step 4: Requirements cleanup for deployment
+
+#### [MODIFY] [requirements.txt](file:///x:/Construction-Site/requirements.txt)
+- `opencv-python` → `opencv-python-headless` (no GUI on server)
+- Remove CUDA-specific torch versions (no GPU on Render free tier)
+
+---
+
+## Open Questions
+
+> [!IMPORTANT]
+> **Please share your MongoDB Atlas connection string format** (you can redact the password). I need to verify it's the `mongodb+srv://` format so I wire it correctly.
+
+> [!IMPORTANT]
+> **Do you have a GitHub repository for this project?** Both Vercel and Render deploy from GitHub. If not, we'll need to create one.
+
+---
+
+## Security
+
+> [!CAUTION]
+> Your email app password is **hardcoded** in `app.py` line 644:
+> ```python
+> CONTACT_EMAIL_PASS = os.getenv("CONTACT_EMAIL_PASS", "hnfm xglv quah qdic")
+> ```
+> I will remove the hardcoded default before deployment. The actual password will be set as an environment variable on Render.
+
+---
+
+## Verification Plan
+
+### After Render Deploy
+1. Visit `https://your-app.onrender.com/` — should show the homepage (backend still serves templates too)
+2. Test API: `https://your-app.onrender.com/api/stats` — should return JSON
+
+### After Vercel Deploy
+1. Visit `https://your-app.vercel.app/` — homepage loads instantly
+2. Navigate to all pages (monitor, alerts, analytics, about, contact)
+3. Verify API calls reach the Render backend (check browser Network tab)
+
+### Local Development
+1. `python run.py` still works as before with `localhost:27017`

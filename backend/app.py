@@ -594,7 +594,7 @@ async def websocket_detections(websocket: WebSocket):
 # ─── Use existing test videos ─────────────────────────────────────────────────
 
 @app.post("/api/start-demo")
-async def start_demo(video: str = "testvid.mp4"):
+async def start_demo(video: str = "testvid5.mp4"):
     """Start processing one of the bundled test videos."""
     if state.is_processing:
         return JSONResponse({"error": "Already processing. Stop first."}, status_code=409)
