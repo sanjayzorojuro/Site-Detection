@@ -112,7 +112,7 @@ Construction-Site/
 
 ```bash
 git clone https://github.com/your-username/sitespark.git
-cd sitespark
+cd Site-Detection
 ```
 
 ---
@@ -232,5 +232,5 @@ MIT License
 
 ## 👨‍💻 Author
 
-**SiteSpark Team**  
+**Sanjay**  
 Building smarter, safer construction sites ⚡
