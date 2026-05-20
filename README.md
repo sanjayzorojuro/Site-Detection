@@ -7,17 +7,14 @@
 
 ## 🚀 Overview
 
+https://sitespark-swart.vercel.app/
+
 **SiteSpark** is an end-to-end computer vision system designed to improve safety in construction environments. It leverages AI to monitor live video feeds, detect hazards, enforce PPE compliance, and provide actionable insights through an interactive dashboard.
 
 The system supports:
 - 📷 Live webcam monitoring  
 - 📁 Video uploads  
 - 🎬 Demo simulations  
----
-**Deployed At **
-
->  https://sitespark-swart.vercel.app/
-
 ---
 
 ## ✨ Key Features
