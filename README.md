@@ -13,6 +13,10 @@ The system supports:
 - 📷 Live webcam monitoring  
 - 📁 Video uploads  
 - 🎬 Demo simulations  
+---
+**Deployed At **
+
+>  https://sitespark-swart.vercel.app/
 
 ---
 
